@@ -131,6 +131,14 @@ function Point(x, y, parent_a, parent_a_weight, parent_b, parent_b_weight) {
     this.initalize();
 }
 
+function findPt(pt) {
+    var retVal=0;
+    
+    while (pts[retVal]!=pt) retVal++;
+    
+    return retVal;
+}
+
 function Skeleton(x, y, scale, rot) {
     this.bones = [];
     this.points = [];
@@ -288,10 +296,10 @@ function Poly(p1, p2, p3, color) {
     function draw() {
         if (this.p1 == null || this.p2 == null || this.p3 == null) return;
     
-        if (ani%100<50) {
-            context.fillStyle = this.color;
-        } else {
+        if (ani%100<25 && this==pls[polySel]) {
             context.fillStyle = "black";
+        } else {
+            context.fillStyle = this.color;
         }
         context.beginPath();
 
@@ -304,7 +312,23 @@ function Poly(p1, p2, p3, color) {
         context.fill();
     }
     
+    function write() {
+        var retStr = '[';
+
+        retStr += findPt(this.p1);
+        retStr += ', ';
+        retStr += findPt(this.p2);
+        retStr += ', ';
+        retStr += findPt(this.p3);
+        retStr += ', \'';
+        retStr += this.color;
+        retStr += '\']';
+        
+        return retStr;
+    }
+    
     this.draw = draw;
+    this.write = write;
 }
 
 var ani=0;
@@ -318,6 +342,7 @@ var pls = [new Poly(null,null,null,"#FFFFFF")];
 function init() {
     bns = [];
     pts = [];
+    pls = [];
 
     for (var i=0; i<bones.length; i++) {
         bns.push(new Bone(bns[bones[i][0]], bns.length, bones[i][1], 1, 1, 1, bones[i][2]));
@@ -328,6 +353,10 @@ function init() {
     for (var i=0; i<points.length; i++) {
         pts.push(new Point(points[i][0], points[i][1],points[i][2],points[i][3],null,0));
     }
+    
+    for (var i=0; i<polys.length; i++) {
+        pls.push(new Poly(pts[polys[i][0]],pts[polys[i][1]],pts[polys[i][2]],polys[i][3]));
+    }
 }
 
 init();
@@ -336,7 +365,7 @@ skele.bones = bns;
 skele.points = pts;
 skele.polys = pls;
 
-var mode = false;
+var mode = 0;
 var anim = true;
 /*
 LMouse - edit
@@ -363,7 +392,7 @@ function draw() {
     
     var str = ""
     
-    if (!mode) str = 'point mode'; else str = 'bone mode';
+    if (mode == 1) str = 'point mode'; else if (mode == 0) str = 'bone mode'; else if (mode == 2) str = 'poly mode';
     
     context.fillText(str,20,20);
 	
@@ -378,11 +407,13 @@ function draw() {
 	}
 
 	if (AKey && !AKeyp) {
-	    mode = !mode;
+	    mode++;
+	    
+	    if (mode>2) mode = 0;
 	}
 	
 	if (EKey && !EKeyp) {
-	    if (mode) {
+	    if (mode==0) {
 	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox2,bns[boneSel].oy2);
 	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy2-225)/(mouse_x-bns[boneSel].ox2-600))*57.29577)-bns[boneSel].rot+180;
 	        
@@ -391,16 +422,33 @@ function draw() {
 	        }
 
 	        bns.push(new Bone(bns[boneSel], bns.length, bdist, 1, 1, 1, brot));
-	    } else {
+	    } else if (mode==1) {
 	        pts.push(new Point(mouse_x-600, mouse_y-225,bns[boneSel],1,null,0));
+	    } else if (mode==2) {
+	        var found=false;
+	        
+	        for (var i=0; i<pls.length; i++) {
+	            if (pls[i].p1 == null || pls[i].p2 == null || pls[i].p3 == null) {
+	                polySel = i;
+	                i = pls.length;
+	                found = true;
+	            }
+	        }
+	    
+	        if (!found) {
+	            pls.push(new Poly(null,null,null,"#FFFFFF"));
+	            polySel = pls.length-1;
+	        }
 	    }
 	}
 	
 	if (DeKey && !DeKeyp) {
-	    if (mode) {
+	    if (mode == 0) {
 	        bns.splice(boneSel,1);
-	    } else {
+	    } else if (mode == 1) {
 	        pts.splice(pointSel,1);
+	    } else if (mode == 2) {
+	        pls.splice(polySel,1);
 	    }
 	}
 	
@@ -427,7 +475,7 @@ function draw() {
 	    psel = bd;
     }
     
-    if (psel!=-1) {
+    if (psel!=-1 && mode==2) {
         if (OneKey && !OneKeyp) {
             pls[polySel].p1 = pts[psel];
         }
@@ -438,11 +486,32 @@ function draw() {
             pls[polySel].p3 = pts[psel];
         }
     }
+    
+    if (mode==2) {
+        if (FourKey && !FourKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,-8,0,0);
+        }
+        if (SevenKey && !SevenKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,8,0,0);
+        }
+        if (FiveKey && !FiveKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,-8,0);
+        }
+        if (EightKey && !EightKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,8,0);
+        }
+        if (SixKey && !SixKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,0,-8);
+        }
+        if (NineKey && !NineKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,0,8);
+        }
+    }
 	
 	if (LMouse) {
-	    if (mode) {
+	    if (mode == 0) {
 	        animation_Config();
-	    } else {
+	    } else if (mode == 1) {
 	        point_Config();
 	    }
 	    
@@ -451,7 +520,7 @@ function draw() {
 	    selected = false;
 	}
 	
-	var boneStr = '[';
+	var boneStr = 'var bones = [';
 	
 	for (var i=0; i<bns.length; i++) {
 	    boneStr += bns[i].write();
@@ -460,7 +529,7 @@ function draw() {
 	
 	boneStr += ']';
 	
-	var pointStr = '[';
+	var pointStr = 'var points = [';
 	
 	for (var i=0; i<pts.length; i++) {
 	    pointStr += pts[i].write();
@@ -469,8 +538,18 @@ function draw() {
 	
 	pointStr += ']';
 	
+	var polyStr = 'var polys = [';
+	
+	for (var i=0; i<pls.length; i++) {
+	    polyStr += pls[i].write();
+	    if (i+1<pls.length) polyStr += ', ';
+	}
+	
+	polyStr += ']';
+	
 	document.querySelector('.results1').innerHTML = boneStr;
 	document.querySelector('.results2').innerHTML = pointStr;
+	document.querySelector('.results3').innerHTML = polyStr;
 	
     KeyPrev();
     MousePrev();
@@ -556,6 +635,37 @@ function animation_Config() {
 	        }
 	    }
     }
+}
+
+function changeCol(col, rc, gc, bc) {
+    var r = col.substr(1,2);
+    var g = col.substr(3,2);
+    var b = col.substr(5,2);
+    
+    r = parseInt(r,16);
+    g = parseInt(g,16);
+    b = parseInt(b,16);
+    
+    r += rc;
+    g += gc;
+    b += bc;
+    
+    if (r>255) r = 255;
+    if (r<0) r = 0; 
+    if (g>255) g = 255;
+    if (g<0) g = 0; 
+    if (b>255) b = 255;
+    if (b<0) b = 0; 
+    
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+    
+    if (r.length==1) r = '0' + r;
+    if (g.length==1) g = '0' + g;
+    if (b.length==1) b = '0' + b;
+    
+    return '#' + r + g + b;
 }
 	
 var fps = 60;

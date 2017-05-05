@@ -1,11 +1,11 @@
 var WKey=false, SKey=false, AKey=false, DKey=false, EKey=false, QKey=false, ZKey=false, XKey=false,
         CKey=false, RKey=false, FKey=false, UKey=false, DoKey=false, LKey=false, RiKey=false, SpKey=false,
         VKey=false, BKey=false, DeKey = false,
-        OneKey=false, TwoKey=false, ThreeKey=false;
+        OneKey=false, TwoKey=false, ThreeKey=false, FourKey=false, FiveKey=false, SixKey=false, SevenKey=false, EightKey=false, NineKey=false;
 var WKeyp, SKeyp, AKeyp, DKeyp, EKeyp, QKeyp, ZKeyp, CKeyp, RiKeyp, FKeyp, UKeyp, DoKeyp, LKeyp, RKryp, SpKeyp, XKeyp,
         VKeyp, BKeyp, DeKeyp,
         LMouse=false, RMouse=false, LMousep=false, RMousep=false,
-        OneKeyp, TwoKeyp, ThreeKeyp;
+        OneKeyp, TwoKeyp, ThreeKeyp, FourKeyp, FiveKeyp, SixKeyp, SevenKeyp, EightKeyp, NineKeyp;
 var mouse_x=0, mouse_y=0, mouse_xp=0, mouse_yp=0;
 var scrollx=0, scrolly=0, cursor_x=4000, cursor_y=150;
 var scrollx=0, scrolly=0;
@@ -73,6 +73,9 @@ function KeyDown(event) {
     if (event.keyCode == "17") {
         SpKey = true;
     }
+    if (event.keyCode == "46") {
+        DeKey = true;
+    }
     if (event.keyCode == "49") {
         OneKey = true;
     }
@@ -81,6 +84,24 @@ function KeyDown(event) {
     }
     if (event.keyCode == "51") {
         ThreeKey = true;
+    }
+    if (event.keyCode == "52") {
+        FourKey = true;
+    }
+    if (event.keyCode == "53") {
+        FiveKey = true;
+    }
+    if (event.keyCode == "54") {
+        SixKey = true;
+    }
+    if (event.keyCode == "55") {
+        SevenKey = true;
+    }
+    if (event.keyCode == "56") {
+        EightKey = true;
+    }
+    if (event.keyCode == "57") {
+        NineKey = true;
     }
 }
 function KeyUp(event) {
@@ -152,6 +173,24 @@ function KeyUp(event) {
     if (event.keyCode == "51") {
         ThreeKey = false;
     }
+    if (event.keyCode == "52") {
+        FourKey = false;
+    }
+    if (event.keyCode == "53") {
+        FiveKey = false;
+    }
+    if (event.keyCode == "54") {
+        SixKey = false;
+    }
+    if (event.keyCode == "55") {
+        SevenKey = false;
+    }
+    if (event.keyCode == "56") {
+        EightKey = false;
+    }
+    if (event.keyCode == "57") {
+        NineKey = false;
+    }
 }
 function KeyPrev() {
     WKeyp = WKey;
@@ -173,6 +212,12 @@ function KeyPrev() {
     OneKeyp = OneKey;
     TwoKeyp = TwoKey;
     ThreeKeyp = ThreeKey;
+    FourKeyp = FourKey;
+    FiveKeyp = FiveKey;
+    SixKeyp = SixKey;
+    SevenKeyp = SevenKey;
+    EightKeyp = EightKey;
+    NineKeyp = NineKey;
 }
 function MouseMove(event) {
     mouse_x = event.clientX - 10;
