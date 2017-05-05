@@ -1,9 +1,11 @@
 var WKey=false, SKey=false, AKey=false, DKey=false, EKey=false, QKey=false, ZKey=false, XKey=false,
         CKey=false, RKey=false, FKey=false, UKey=false, DoKey=false, LKey=false, RiKey=false, SpKey=false,
-        VKey=false, BKey=false, DeKey = false;
+        VKey=false, BKey=false, DeKey = false,
+        OneKey=false, TwoKey=false, ThreeKey=false;
 var WKeyp, SKeyp, AKeyp, DKeyp, EKeyp, QKeyp, ZKeyp, CKeyp, RiKeyp, FKeyp, UKeyp, DoKeyp, LKeyp, RKryp, SpKeyp, XKeyp,
         VKeyp, BKeyp, DeKeyp,
-        LMouse=false, RMouse=false, LMousep=false, RMousep=false;
+        LMouse=false, RMouse=false, LMousep=false, RMousep=false,
+        OneKeyp, TwoKeyp, ThreeKeyp;
 var mouse_x=0, mouse_y=0, mouse_xp=0, mouse_yp=0;
 var scrollx=0, scrolly=0, cursor_x=4000, cursor_y=150;
 var scrollx=0, scrolly=0;
@@ -71,8 +73,14 @@ function KeyDown(event) {
     if (event.keyCode == "17") {
         SpKey = true;
     }
-    if (event.keyCode == "46") {
-        DeKey = true;
+    if (event.keyCode == "49") {
+        OneKey = true;
+    }
+    if (event.keyCode == "50") {
+        TwoKey = true;
+    }
+    if (event.keyCode == "51") {
+        ThreeKey = true;
     }
 }
 function KeyUp(event) {
@@ -135,6 +143,15 @@ function KeyUp(event) {
     if (event.keyCode == "46") {
         DeKey = false;
     }
+    if (event.keyCode == "49") {
+        OneKey = false;
+    }
+    if (event.keyCode == "50") {
+        TwoKey = false;
+    }
+    if (event.keyCode == "51") {
+        ThreeKey = false;
+    }
 }
 function KeyPrev() {
     WKeyp = WKey;
@@ -152,11 +169,14 @@ function KeyPrev() {
     VKeyp = VKey;
     BKeyp = BKey;
     SpKeyp = SpKey;
-    DeKeyp = DeKey
+    DeKeyp = DeKey;
+    OneKeyp = OneKey;
+    TwoKeyp = TwoKey;
+    ThreeKeyp = ThreeKey;
 }
 function MouseMove(event) {
-    mouse_x = event.clientX - 8;
-    mouse_y = event.clientY - 8;
+    mouse_x = event.clientX - 10;
+    mouse_y = event.clientY - 10;
 }
 function MouseDown(event) {
     if (event.button == 0) {

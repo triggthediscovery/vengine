@@ -158,6 +158,10 @@ function Skeleton(x, y, scale, rot) {
         for (var i = 0; i < this.points.length; i++) {
             this.points[i].draw();
         }
+        
+        for (var i = 0; i < this.polys.length; i++) {
+            this.polys[i].draw();
+        }
     }
     
     function show() {
@@ -275,12 +279,41 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     this.write = write;
 }
 
+function Poly(p1, p2, p3, color) {
+    this.p1 = p1;
+    this.p2 = p2;
+    this.p3 = p3;
+    this.color = color;
+    
+    function draw() {
+        if (this.p1 == null || this.p2 == null || this.p3 == null) return;
+    
+        if (ani%100<50) {
+            context.fillStyle = this.color;
+        } else {
+            context.fillStyle = "black";
+        }
+        context.beginPath();
+
+        context.moveTo(this.p1.x1,this.p1.y1);
+        context.lineTo(this.p2.x1,this.p2.y1);
+        context.lineTo(this.p3.x1,this.p3.y1);
+        context.lineTo(this.p1.x1,this.p1.y1);
+
+        context.closePath();
+        context.fill();
+    }
+    
+    this.draw = draw;
+}
+
 var ani=0;
 
 var skele = new Skeleton(200,225,1,0);
 
 var bns = [];
 var pts = [];
+var pls = [new Poly(null,null,null,"#FFFFFF")];
 
 function init() {
     bns = [];
@@ -301,16 +334,20 @@ init();
 
 skele.bones = bns;
 skele.points = pts;
+skele.polys = pls;
 
-var cow = false;
+var mode = false;
+var anim = true;
 /*
 LMouse - edit
 AKey - change edit mode
 EKey - add point
+RKey - change parent
 */
 
 var pointSel = -1;
 var boneSel = -1;
+var polySel = 0;
 var selected = false;
 
 function draw() {
@@ -322,9 +359,11 @@ function draw() {
     
     context.fillStyle = 'black';
     
+    ani++;
+    
     var str = ""
     
-    if (!cow) str = 'point mode'; else str = 'bone mode';
+    if (!mode) str = 'point mode'; else str = 'bone mode';
     
     context.fillText(str,20,20);
 	
@@ -339,11 +378,11 @@ function draw() {
 	}
 
 	if (AKey && !AKeyp) {
-	    cow = !cow;
+	    mode = !mode;
 	}
 	
 	if (EKey && !EKeyp) {
-	    if (cow) {
+	    if (mode) {
 	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox2,bns[boneSel].oy2);
 	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy2-225)/(mouse_x-bns[boneSel].ox2-600))*57.29577)-bns[boneSel].rot+180;
 	        
@@ -358,19 +397,50 @@ function draw() {
 	}
 	
 	if (DeKey && !DeKeyp) {
-	    if (cow) {
+	    if (mode) {
 	        bns.splice(boneSel,1);
 	    } else {
 	        pts.splice(pointSel,1);
 	    }
 	}
+	
+	if (RKey && !RKeyp) {
+	    pts[pointSel].parent_a = bns[boneSel];
+	}
 
     skele.update();
 	skele.draw();
 	
+	var tde = 100;
+	var psel = -1;
+	
+	for (var i=0; i<pts.length; i++) {
+        dde=Math.abs(mouse_x-pts[i].x-600)+Math.abs(mouse_y-pts[i].y-225);
+
+        if (dde<tde) {
+	        bd=i;
+	        tde=dde;
+        }
+    }
+
+    if (tde<32) {		
+	    psel = bd;
+    }
+    
+    if (psel!=-1) {
+        if (OneKey && !OneKeyp) {
+            pls[polySel].p1 = pts[psel];
+        }
+        if (TwoKey && !TwoKeyp) {
+            pls[polySel].p2 = pts[psel];
+        }
+        if (ThreeKey && !ThreeKeyp) {
+            pls[polySel].p3 = pts[psel];
+        }
+    }
 	
 	if (LMouse) {
-	    if (cow) {
+	    if (mode) {
 	        animation_Config();
 	    } else {
 	        point_Config();
@@ -434,12 +504,24 @@ function animation_Config() {
     var tde = 6400;
 
     if (selected && (boneSel != -1)) {
-        var rn = bns[boneSel].parent.rot;
-        
-        bns[boneSel].roti = Math.round(Math.atan((mouse_y-bns[boneSel].y1)/(mouse_x-bns[boneSel].x1))*57.29577)-rn+180;
+        if (anim) {
+            var rn = bns[boneSel].parent.rot;
+            
+            bns[boneSel].roti = Math.round(Math.atan((mouse_y-bns[boneSel].y1)/(mouse_x-bns[boneSel].x1))*57.29577)-rn+180;
 		
-	    if ((mouse_x-bns[boneSel].x1)>=0) {
-		    bns[boneSel].roti+=180;
+	        if ((mouse_x-bns[boneSel].x1)>=0) {
+		        bns[boneSel].roti+=180;
+	        }
+	    } else {
+	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox1,bns[boneSel].oy1);
+	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy1-225)/(mouse_x-bns[boneSel].ox1-600))*57.29577)-bns[boneSel].parent.rot+180;
+	        
+	        if ((mouse_x-bns[boneSel].ox1-600)>0) {
+		        brot+=180;
+	        }
+	        
+	        bns[boneSel].roto = brot;
+	        bns[boneSel].length = bdist;
 	    }
     } else {
         for (var i=0; i<bns.length; i++) {
@@ -453,8 +535,25 @@ function animation_Config() {
 
 	    if (tde<32) {
 		    boneSel=bd;
+		    
+		    anim=true;
 	    } else {
-	        boneSel=-1;
+	        for (var i=0; i<bns.length; i++) {
+                dde=Math.abs(mouse_x-bns[i].ox2-600)+Math.abs(mouse_y-bns[i].oy2-225);
+
+	            if (dde<tde) {
+		            bd=i;
+		            tde=dde;
+	            }
+	        }
+
+	        if (tde<32) {
+		        boneSel=bd;
+		        
+		        anim=false;
+	        } else {
+	            boneSel=-1;
+	        }
 	    }
     }
 }
