@@ -10,6 +10,159 @@ var mouse_x=0, mouse_y=0, mouse_xp=0, mouse_yp=0;
 var scrollx=0, scrolly=0, cursor_x=4000, cursor_y=150;
 var scrollx=0, scrolly=0;
 
+var mode = 0;
+var anim = true;
+/*
+LMouse - edit
+AKey - change edit mode
+EKey - add point
+RKey - change parent
+
+CKey - copy
+VKey - paste
+*/
+
+var pointSel = -1;
+var boneSel = -1;
+var polySel = 0;
+var selected = false;
+var colBuf = "#000000";
+
+function Input() {
+    if (AKey && !AKeyp) {
+	    mode++;
+	    
+	    if (mode>2) mode = 0;
+	}
+	
+	if (EKey && !EKeyp) {
+	    if (mode==0) {
+	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox2,bns[boneSel].oy2);
+	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy2-225)/(mouse_x-bns[boneSel].ox2-600))*57.29577)-bns[boneSel].rot+180;
+	        
+	        if ((mouse_x-bns[boneSel].ox2-600)>0) {
+		        brot+=180;
+	        }
+
+	        bns.push(new Bone(bns[boneSel], bns.length, bdist, 1, 1, 1, brot));
+	    } else if (mode==1) {
+	        pts.push(new Point(mouse_x-600, mouse_y-225,bns[boneSel],1,null,0));
+	    } else if (mode==2) {
+	        var found=false;
+	        
+	        for (var i=0; i<pls.length; i++) {
+	            if (pls[i].p1 == null || pls[i].p2 == null || pls[i].p3 == null) {
+	                polySel = i;
+	                i = pls.length;
+	                found = true;
+	            }
+	        }
+	    
+	        if (!found) {
+	            pls.push(new Poly(null,null,null,"#FFFFFF"));
+	            polySel = pls.length-1;
+	        }
+	    }
+	}
+	
+	if (DeKey && !DeKeyp) {
+	    if (mode == 0) {
+	        bns.splice(boneSel,1);
+	    } else if (mode == 1) {
+	        pts.splice(pointSel,1);
+	    } else if (mode == 2) {
+	        pls.splice(polySel,1);
+	    }
+	}
+	
+	if (RKey && !RKeyp) {
+	    pts[pointSel].parent_a = bns[boneSel];
+	}
+	
+	var tde = 100;
+	var psel = -1;
+	
+	for (var i=0; i<pts.length; i++) {
+        dde=Math.abs(mouse_x-pts[i].x-600)+Math.abs(mouse_y-pts[i].y-225);
+
+        if (dde<tde) {
+	        bd=i;
+	        tde=dde;
+        }
+    }
+
+    if (tde<32) {		
+	    psel = bd;
+    }
+    
+    if (psel!=-1 && mode==2) {
+        if (OneKey && !OneKeyp) {
+            pls[polySel].p1 = pts[psel];
+        }
+        if (TwoKey && !TwoKeyp) {
+            pls[polySel].p2 = pts[psel];
+        }
+        if (ThreeKey && !ThreeKeyp) {
+            pls[polySel].p3 = pts[psel];
+        }
+    }
+    
+    if (mode==2) {
+        if (FourKey && !FourKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,-8,0,0);
+        }
+        if (SevenKey && !SevenKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,8,0,0);
+        }
+        if (FiveKey && !FiveKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,-8,0);
+        }
+        if (EightKey && !EightKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,8,0);
+        }
+        if (SixKey && !SixKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,0,-8);
+        }
+        if (NineKey && !NineKeyp) {
+            pls[polySel].color = changeCol(pls[polySel].color,0,0,8);
+        }
+        
+        if (VKey && !VKeyp) {
+	        pls[polySel].color = colBuf;
+	    }
+	
+	    if (CKey && !CKeyp) {
+	        colBuf = pls[polySel].color;
+	    }
+	    
+	    if (SKey && !SKeyp) {
+	        polySel++;
+	        
+	        if (polySel>(pls.length-1)) polySel = 0;
+	    }
+    }
+    
+    for (var i=0; i<bns.length; i++) {
+	    bns[i].initalize();
+	}
+
+    skele.show();
+	
+	if (LMouse) {
+	    if (mode == 0) {
+	        animation_Config();
+	    } else if (mode == 1) {
+	        point_Config();
+	    }
+	    
+	    selected = true;
+	} else {
+	    selected = false;
+	}
+	
+	
+}
+
 function KeyDown(event) {
     if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
         event.preventDefault();
