@@ -38,7 +38,7 @@ function Input() {
 	if (EKey && !EKeyp) {
 	    if (mode==0) {
 	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox2,bns[boneSel].oy2);
-	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy2-225)/(mouse_x-bns[boneSel].ox2-600))*57.29577)-bns[boneSel].rot+180;
+	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy2-225)/(mouse_x-bns[boneSel].ox2-600))*57.29577)-bns[boneSel].rotu+180;
 	        
 	        if ((mouse_x-bns[boneSel].ox2-600)>0) {
 		        brot+=180;
@@ -95,6 +95,10 @@ function Input() {
 	    psel = bd;
     }
     
+    if (mode == 1 && SKey && !SKeyp) {
+        pointSel=psel;
+    }
+    
     if (psel!=-1 && mode==2) {
         if (OneKey && !OneKeyp) {
             pls[polySel].p1 = pts[psel];
@@ -140,14 +144,16 @@ function Input() {
 	        
 	        if (polySel>(pls.length-1)) polySel = 0;
 	    }
+	    
+	    if (QKey && !QKeyp) {
+	        var hold = pls[polySel]
+	    
+	        pls.splice(polySel,1);
+	        
+	        pls.push(hold);
+	    }
     }
-    
-    for (var i=0; i<bns.length; i++) {
-	    bns[i].initalize();
-	}
 
-    skele.show();
-	
 	if (LMouse) {
 	    if (mode == 0) {
 	        animation_Config();

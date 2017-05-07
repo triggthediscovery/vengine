@@ -9,6 +9,7 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     this.roto = roti;
     this.help = -1;
     this.rot = 0;
+    this.rotu = 0;
 
     function initalize() {
         if (typeof this.parent != 'object') {
@@ -18,14 +19,14 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
         if (this.parent.help==-1) {
             this.ox1 = this.parent.ox2; 
             this.oy1 = this.parent.oy2;
-            this.rot = this.roto + this.parent.rot;
+            this.rotu = this.roto + this.parent.rotu;
         } else {
             this.ox1 = 0; 
             this.oy1 = 0;
-            this.rot = this.roto;
+            this.rotu = this.roto;
         }
-        this.ox2 = (Math.cos(this.rot/57.29577)*this.length*this.scale_length)+this.ox1; 
-        this.oy2 = (Math.sin(this.rot/57.29577)*this.length*this.scale_length)+this.oy1;
+        this.ox2 = (Math.cos(this.rotu/57.29577)*this.length*this.scale_length)+this.ox1; 
+        this.oy2 = (Math.sin(this.rotu/57.29577)*this.length*this.scale_length)+this.oy1;
     }
 
     function update() {

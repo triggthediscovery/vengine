@@ -25,11 +25,6 @@ function Skeleton(x, y, scale, rot) {
         for (var i = 0; i < this.bones.length; i++) {
             this.bones[i].draw();
         }  
-          /*    
-        for (var i = 0; i < this.points.length; i++) {
-            this.points[i].draw();
-        }
-        */
     }
     
     function show() {

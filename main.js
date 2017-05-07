@@ -190,9 +190,14 @@ function draw() {
 	for (var i=0; i<pts.length; i++) {
 	    pts[i].initalize();
 	}
+	
+	for (var i=0; i<bns.length; i++) {
+	    bns[i].initalize();
+	}
 
     skele.update();
 	skele.draw();
+	skele.show();
 	
 	if (polySel!=-1 && pls[polySel].p1!=null && pls[polySel].p2!=null && pls[polySel].p3!=null) {
 	    context.strokeStyle = "#FFFF00";
@@ -276,6 +281,8 @@ function animation_Config() {
 
     if (selected && (boneSel != -1)) {
         if (anim) {
+            skele.draw();
+        
             var rn = bns[boneSel].parent.rot;
             
             bns[boneSel].roti = Math.round(Math.atan((mouse_y-bns[boneSel].y1)/(mouse_x-bns[boneSel].x1))*57.29577)-rn+180;
@@ -285,7 +292,7 @@ function animation_Config() {
 	        }
 	    } else {
 	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox1,bns[boneSel].oy1);
-	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy1-225)/(mouse_x-bns[boneSel].ox1-600))*57.29577)-bns[boneSel].parent.rot+180;
+	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy1-225)/(mouse_x-bns[boneSel].ox1-600))*57.29577)-bns[boneSel].parent.rotu+180;
 	        
 	        if ((mouse_x-bns[boneSel].ox1-600)>0) {
 		        brot+=180;
