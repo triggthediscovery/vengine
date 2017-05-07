@@ -24,7 +24,7 @@ VKey - paste
 
 var pointSel = -1;
 var boneSel = -1;
-var polySel = 0;
+var polySel = -1;
 var selected = false;
 var colBuf = "#000000";
 
@@ -153,6 +153,12 @@ function Input() {
 	        animation_Config();
 	    } else if (mode == 1) {
 	        point_Config();
+	    } else if (mode == 2) {
+	        polySel = -1;
+	    
+	        for (var i = 0; i < pls.length; i++) {
+                if (pls[i].selected()) polySel=i;
+            }
 	    }
 	    
 	    selected = true;

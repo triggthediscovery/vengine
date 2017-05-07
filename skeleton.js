@@ -18,20 +18,25 @@ function Skeleton(x, y, scale, rot) {
     }
     
     function draw() {
-        for (var i = 0; i < this.bones.length; i++) {
-            this.bones[i].draw();
-        }  
-              
-        for (var i = 0; i < this.points.length; i++) {
-            this.points[i].draw();
-        }
-        
         for (var i = 0; i < this.polys.length; i++) {
             this.polys[i].draw();
         }
+    
+        for (var i = 0; i < this.bones.length; i++) {
+            this.bones[i].draw();
+        }  
+          /*    
+        for (var i = 0; i < this.points.length; i++) {
+            this.points[i].draw();
+        }
+        */
     }
     
     function show() {
+        for (var i = 0; i < this.polys.length; i++) {
+            this.polys[i].show();
+        }
+    
         for (var i = 0; i < this.bones.length; i++) {
             this.bones[i].show();
         }  
@@ -39,6 +44,8 @@ function Skeleton(x, y, scale, rot) {
         for (var i = 0; i < this.points.length; i++) {
             this.points[i].show();
         }
+        
+        
     }
     
     this.update = update;

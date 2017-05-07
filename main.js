@@ -61,6 +61,7 @@ function Poly(p1, p2, p3, color) {
         if (this.p1 == null || this.p2 == null || this.p3 == null) return;
 
         context.fillStyle = this.color;
+        context.strokeStyle = this.color;
         context.beginPath();
 
         context.moveTo(this.p1.x1,this.p1.y1);
@@ -70,6 +71,24 @@ function Poly(p1, p2, p3, color) {
 
         context.closePath();
         context.fill();
+        context.stroke();
+    }
+    
+    function show() {
+        if (this.p1 == null || this.p2 == null || this.p3 == null) return;
+
+        context.fillStyle = this.color;
+        context.strokeStyle = this.color;
+        context.beginPath();
+
+        context.moveTo(this.p1.x+600,this.p1.y+225);
+        context.lineTo(this.p2.x+600,this.p2.y+225);
+        context.lineTo(this.p3.x+600,this.p3.y+225);
+        context.lineTo(this.p1.x+600,this.p1.y+225);
+
+        context.closePath();
+        context.fill();
+        context.stroke();
     }
     
     function write() {
@@ -87,8 +106,31 @@ function Poly(p1, p2, p3, color) {
         return retStr;
     }
     
+    function selected() {
+        var a, b;
+        
+        a = ldist(this.p1.x,this.p1.y,this.p2.x,this.p2.y,mouse_x-600,mouse_y-225);
+        b = ldist(this.p1.x,this.p1.y,this.p2.x,this.p2.y,this.p3.x,this.p3.y);
+        
+        if ((a.y/Math.abs(a.y)) != (b.y/Math.abs(b.y))) return false;
+        
+        a = ldist(this.p3.x,this.p3.y,this.p2.x,this.p2.y,mouse_x-600,mouse_y-225);
+        b = ldist(this.p3.x,this.p3.y,this.p2.x,this.p2.y,this.p1.x,this.p1.y);
+        
+        if ((a.y/Math.abs(a.y)) != (b.y/Math.abs(b.y))) return false;
+        
+        a = ldist(this.p1.x,this.p1.y,this.p3.x,this.p3.y,mouse_x-600,mouse_y-225);
+        b = ldist(this.p1.x,this.p1.y,this.p3.x,this.p3.y,this.p2.x,this.p2.y);
+        
+        if ((a.y/Math.abs(a.y)) != (b.y/Math.abs(b.y))) return false;
+        
+        return true;
+    }
+    
     this.draw = draw;
     this.write = write;
+    this.selected = selected;
+    this.show = show;
 }
 
 var ani=0;
@@ -125,6 +167,9 @@ skele.bones = bns;
 skele.points = pts;
 skele.polys = pls;
 
+context.lineWidth = 1;
+context.lineCap="none";
+
 function draw() {
     context.clearRect(0, 0, 1280, 720);
     
@@ -149,7 +194,7 @@ function draw() {
     skele.update();
 	skele.draw();
 	
-	if (pls[polySel].p1!=null && pls[polySel].p2!=null && pls[polySel].p3!=null) {
+	if (polySel!=-1 && pls[polySel].p1!=null && pls[polySel].p2!=null && pls[polySel].p3!=null) {
 	    context.strokeStyle = "#FFFF00";
         context.beginPath();
 

@@ -50,7 +50,7 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     
     function draw() {
         if (this!=bns[boneSel]) {
-            context.strokeStyle = "red";
+            context.strokeStyle = "grey";
         } else {
             context.strokeStyle = "green";
         }
@@ -65,7 +65,7 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     
     function show() {
         if (this!=bns[boneSel]) {
-            context.strokeStyle = "red";
+            context.strokeStyle = "grey";
         } else {
             context.strokeStyle = "green";
         }
