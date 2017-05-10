@@ -19,11 +19,31 @@ function Point(x, y, parent_a, parent_a_weight, parent_b, parent_b_weight) {
     
         this.offsetp1x = b.x;
         this.offsetp1y = -b.y;
+        
+        if (this.parent_b != null) {
+            var b = ldist(this.parent_b.ox1,this.parent_b.oy1,
+                          this.parent_b.ox2,this.parent_b.oy2,
+                          this.x,this.y);
+        
+            this.offsetp2x = b.x;
+            this.offsetp2y = -b.y;
+        }
     }
     
     function update() {    
-        this.x1 = (this.offsetp1x*this.parent_a.parx) + (this.offsetp1y*this.parent_a.perx) + this.parent_a.x1;
-        this.y1 = (this.offsetp1x*this.parent_a.pary) + (this.offsetp1y*this.parent_a.pery) + this.parent_a.y1; 
+        if (this.parent_b != null) {
+            var xx1 = (this.offsetp1x*this.parent_a.parx) + (this.offsetp1y*this.parent_a.perx) + this.parent_a.x1;
+            var yy1 = (this.offsetp1x*this.parent_a.pary) + (this.offsetp1y*this.parent_a.pery) + this.parent_a.y1; 
+        
+            var xx2 = (this.offsetp2x*this.parent_b.parx) + (this.offsetp2y*this.parent_b.perx) + this.parent_b.x1;
+            var yy2 = (this.offsetp2x*this.parent_b.pary) + (this.offsetp2y*this.parent_b.pery) + this.parent_b.y1; 
+            
+            this.x1 = (xx1+xx2)/2;
+            this.y1 = (yy1+yy2)/2;
+        } else {
+            this.x1 = (this.offsetp1x*this.parent_a.parx) + (this.offsetp1y*this.parent_a.perx) + this.parent_a.x1;
+            this.y1 = (this.offsetp1x*this.parent_a.pary) + (this.offsetp1y*this.parent_a.pery) + this.parent_a.y1;
+        }
     }
     
     function draw() {
@@ -71,7 +91,7 @@ function Point(x, y, parent_a, parent_a_weight, parent_b, parent_b_weight) {
         retStr += ', ';
         retStr += this.parent_a.ID;
         retStr += ', ';
-        retStr += this.parent_a_weight;
+        if (this.parent_b != null) retStr += this.parent_b.ID; else retStr += 'null';
         retStr += ']';
         
         return retStr;
