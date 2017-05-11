@@ -30,7 +30,7 @@ var colBuf = "#000000";
 var play = false;
 
 function Input() {
-    if (AKey && !AKeyp) {
+    if (ZKey && !ZKeyp) {
 	    mode++;
 	    
 	    if (mode>3) mode = 0;
@@ -63,6 +63,16 @@ function Input() {
 	            pls.push(new Poly(null,null,null,"#FFFFFF"));
 	            polySel = pls.length-1;
 	        }
+	    } else if (mode==3) {
+	        skele.frame = skele.frames.length;
+	    
+        	var addArr = [];
+            
+            for (var i=0; i<skele.frames[0].length; i++) {
+                addArr.push(undefined);
+            }
+            
+            skele.frames.push(addArr);
 	    }
 	}
 	
@@ -95,15 +105,11 @@ function Input() {
 	        skele.frame++;
 	        
 	        if (skele.frame==skele.frames.length) {
-	            var addArr = [];
-	            
-	            for (var i=0; i<skele.frames[0].length; i++) {
-	                addArr.push(undefined);
-	            }
-	            
-	            skele.frames.push(addArr);
+	            skele.frame=0;
 	        }
 	    }
+
+	    var posArr = findBlend(skele.poss,skele.frame,3);
 	    
 	    if (FKey && !FKeyp) {
 	        skele.frame--;
@@ -113,8 +119,37 @@ function Input() {
 	        }
 	    }
 	    
-	    if (WKey && !WKeyp) {
+	    if (QKey && !QKeyp) {
 	        play = !play;
+	    }
+	    
+	    if (WKey && !WKeyp) {
+	        if (skele.poss[skele.frame][1]==undefined) {
+	            skele.poss[skele.frame][1] = posArr[1];
+	        }
+	    
+	        skele.poss[skele.frame][1]--;
+	    }
+	    if (SKey && !SKeyp) {
+	        if (skele.poss[skele.frame][1]==undefined) {
+	            skele.poss[skele.frame][1] = posArr[1];
+	        }
+	    
+	        skele.poss[skele.frame][1]++;
+	    }
+	    if (AKey && !AKeyp) {
+	        if (skele.poss[skele.frame][0]==undefined) {
+	            skele.poss[skele.frame][0] = posArr[0];
+	        }
+	    
+	        skele.poss[skele.frame][0]++;
+	    }
+	    if (DKey && !DKeyp) {
+	        if (skele.poss[skele.frame][0]==undefined) {
+	            skele.poss[skele.frame][0] = posArr[0];
+	        }
+	    
+	        skele.poss[skele.frame][0]--;
 	    }
 	}
 	
@@ -134,8 +169,28 @@ function Input() {
 	    psel = bd;
     }
     
-    if (mode == 1 && SKey && !SKeyp) {
-        pointSel=psel;
+    tde = 100;
+	var bsel = -1;
+	
+	for (var i=0; i<bns.length; i++) {
+        dde=Math.abs(mouse_x-bns[i].ox2-600)+Math.abs(mouse_y-bns[i].oy2-225);
+
+        if (dde<tde) {
+	        bd=i;
+	        tde=dde;
+        }
+    }
+
+    if (tde<32) {		
+	    bsel = bd;
+    }
+    
+    if (SKey && !SKeyp) {
+        if (mode == 1) {
+            pointSel = psel;
+        } else if (mode == 0) {
+            boneSel = bsel;
+        }
     }
     
     if (psel!=-1 && mode==2) {
@@ -248,7 +303,7 @@ function bone_Config() {
         var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox1,bns[boneSel].oy1);
         var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy1-225)/(mouse_x-bns[boneSel].ox1-600))*57.29577)-bns[boneSel].parent.rotu+180;
         
-        if ((mouse_x-bns[boneSel].ox1-600)>0) {
+        if ((mouse_x-bns[boneSel].ox1-600)>=0) {
 	        brot+=180;
         }
         

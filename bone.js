@@ -42,8 +42,8 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
 
         this.parx = Math.cos(this.rot/57.29577);
         this.pary = Math.sin(this.rot/57.29577); 
-        this.perx = Math.sin(this.rot/57.29577); 
-        this.pery = -Math.cos(this.rot/57.29577);
+        this.perx = Math.sin(this.rot/57.29577)*this.scale_length; 
+        this.pery = -Math.cos(this.rot/57.29577)*this.scale_length;
         
         this.x2 = (Math.cos(this.rot/57.29577)*this.length*this.scale_length)+this.x1; 
         this.y2 = (Math.sin(this.rot/57.29577)*this.length*this.scale_length)+this.y1;
