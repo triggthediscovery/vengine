@@ -1,33 +1,70 @@
 function findBlend(arr, curr, len) {
     var retArr = [];
+
+    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
     
-    while (arr[curr].length<len) arr[curr].push(undefined);
-    
-    for (var i=0; i<arr[curr].length; i++) {
+    for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
+        var s=Math.floor(curr), e=Math.ceil(curr);
         
-        if (arr[curr][i] != undefined) {
-            retArr.push(arr[curr][i]);
+        while (s>=0 && arr[s][i] == undefined) s--;
+        while (e<arr.length && arr[e][i] == undefined) e++;
+        
+        if (s==-1 || e==arr.length) {
+            if (s!=-1) retArr.push(arr[s][i]);
+            else if (e!=arr.length) retArr.push(arr[e][i]);
+            else retArr.push(bns[i].roto);
         } else {
-            var s=curr, e=curr;
+            var d = arr[s][i]-arr[e][i];
             
-            while (s>=0 && arr[s][i] == undefined) s--;
-            while (e<arr.length && arr[e][i] == undefined) e++;
+            while (d>180) d-=360;
+            while (d<-180) d+=360;
+            
+            var m = d/(s-e);
+            
+            if (isNaN(m)) m=0;
+            
+            retArr.push(arr[s][i]+(m*(curr-s)));
+        }
+    }
+    
+    return retArr;
+}
+
+function findBlend2(arr, curr, len, len2) {
+    var retArr = [];
+
+    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
+    
+    for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
+        var pArr = [];
+    
+        for (var j=0; j<len2; j++) {
+            var s=Math.floor(curr), e=Math.ceil(curr);
+            
+            while (s>=0 && arr[s][i][j] == undefined) s--;
+            while (e<arr.length && arr[e][i][j] == undefined) e++;
             
             if (s==-1 || e==arr.length) {
-                if (s!=-1) retArr.push(arr[s][i]);
-                else if (e!=arr.length) retArr.push(arr[e][i]);
-                else retArr.push(bns[i].roto);
+                if (s!=-1) pArr.push(arr[s][i][j]);
+                else if (e!=arr.length) pArr.push(arr[e][i][j]);
+                else {
+                    if (j==0) pArr.push(bns[i].roto); else pArr.push(1);
+                }
             } else {
-                var d = arr[s][i]-arr[e][i];
+                var d = arr[s][i][j]-arr[e][i][j];
                 
                 while (d>180) d-=360;
                 while (d<-180) d+=360;
                 
                 var m = d/(s-e);
                 
-                retArr.push(arr[s][i]+(m*(curr-s)));
+                if (isNaN(m)) m=0;
+                
+                pArr.push(arr[s][i][j]+(m*(curr-s)));
             }
         }
+        
+        retArr.push(pArr);
     }
     
     return retArr;
@@ -46,6 +83,7 @@ function Skeleton(x, y, scale, rot, poss, frames) {
     this.rotu = rot;
     this.roti = rot;
     this.frame = 0;
+    this.speed = 0.07;
 
     function update() {
         var posArr = findBlend(this.poss,this.frame,3);
@@ -56,10 +94,11 @@ function Skeleton(x, y, scale, rot, poss, frames) {
         this.rotu = posArr[2];
         this.roti = posArr[2];
     
-        var barr = findBlend(this.frames,this.frame,bns.length);
+        var barr = findBlend2(this.frames,this.frame,bns.length,2);
     
         for (var i = 0; i < this.bones.length; i++) {
-            this.bones[i].roti = barr[i];
+            this.bones[i].roti = barr[i][0];
+            this.bones[i].scale_length = barr[i][1];
             this.bones[i].update();
         }
         
@@ -101,12 +140,8 @@ function Skeleton(x, y, scale, rot, poss, frames) {
         for (var i=0; i<this.poss.length;i++) {
             retStr += '[';
             for (var j=0; j<3;j++) {
-                if (j>=3) {
-                    retStr += 'null';
-                } else {
-                    retStr += this.poss[i][j];
-                }
-                
+                retStr += this.poss[i][j];
+
                 if (j != 2) retStr += ', '; 
             }
             retStr += ']';
@@ -118,12 +153,12 @@ function Skeleton(x, y, scale, rot, poss, frames) {
         for (var i=0; i<this.frames.length;i++) {
             retStr += '[';
             for (var j=0; j<this.bones.length;j++) {
-                if (j>=this.frames[i].length) {
-                    retStr += 'null';
-                } else {
-                    retStr += this.frames[i][j];
-                }
-                
+                retStr += '[';
+                retStr += this.frames[i][j][0];
+                retStr += ', ';
+                retStr += this.frames[i][j][1];
+                retStr += ']';
+                                
                 if (j != this.bones.length-1) retStr += ', '; 
             }
             retStr += ']';

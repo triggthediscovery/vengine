@@ -25,8 +25,8 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
             this.oy1 = 0;
             this.rotu = this.roto;
         }
-        this.ox2 = (Math.cos(this.rotu/57.29577)*this.length*this.scale_length)+this.ox1; 
-        this.oy2 = (Math.sin(this.rotu/57.29577)*this.length*this.scale_length)+this.oy1;
+        this.ox2 = (Math.cos(this.rotu/57.29577)*this.length)+this.ox1; 
+        this.oy2 = (Math.sin(this.rotu/57.29577)*this.length)+this.oy1;
     }
 
     function update() {
@@ -40,10 +40,10 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
             this.rot = this.roti+this.parent.rot;
         }
 
-        this.parx = Math.cos(this.rot/57.29577);
-        this.pary = Math.sin(this.rot/57.29577); 
-        this.perx = Math.sin(this.rot/57.29577)*this.scale_length; 
-        this.pery = -Math.cos(this.rot/57.29577)*this.scale_length;
+        this.parx = Math.cos(this.rot/57.29577)*this.scale_length;
+        this.pary = Math.sin(this.rot/57.29577)*this.scale_length; 
+        this.perx = Math.sin(this.rot/57.29577); 
+        this.pery = -Math.cos(this.rot/57.29577);
         
         this.x2 = (Math.cos(this.rot/57.29577)*this.length*this.scale_length)+this.x1; 
         this.y2 = (Math.sin(this.rot/57.29577)*this.length*this.scale_length)+this.y1;

@@ -108,10 +108,14 @@ function draw() {
     
     if (mode == 3) {
         if (play) {
-            skele.frame++;
+            skele.frame+=skele.speed;
             
-            if (skele.frame==skele.frames.length) {
+            if (skele.frame>=(skele.frames.length-1)) {
                 skele.frame=0;
+            }
+            
+            if (skele.frame<0) {
+                skele.frame=(skele.frames.length-1);
             }
         }
     } else {

@@ -102,7 +102,7 @@ function Input() {
 	
 	if (mode == 3) {
 	    if (RKey && !RKeyp) {
-	        skele.frame++;
+	        skele.frame = Math.round(skele.frame+1);
 	        
 	        if (skele.frame==skele.frames.length) {
 	            skele.frame=0;
@@ -112,7 +112,7 @@ function Input() {
 	    var posArr = findBlend(skele.poss,skele.frame,3);
 	    
 	    if (FKey && !FKeyp) {
-	        skele.frame--;
+	        skele.frame = Math.round(skele.frame-1);
 	        
 	        if (skele.frame<0) {
 	            skele.frame = skele.frames.length-1;
@@ -150,6 +150,34 @@ function Input() {
 	        }
 	    
 	        skele.poss[skele.frame][0]--;
+	    }
+	    
+	    var rotArr = findBlend2(skele.frames,skele.frame,bns.length,2);
+	    
+	    if (OneKey && !OneKeyp) {
+	        if (skele.frames[skele.frame][boneSel][1] == undefined) {
+	            skele.frames[skele.frame][boneSel][1] = rotArr[boneSel][1];
+	        }
+	    
+	        skele.frames[skele.frame][boneSel][1] -= 0.1;
+	    }
+	    if (TwoKey && !TwoKeyp) {
+	        skele.frames[skele.frame][boneSel][1] = 1;
+	    }
+	    if (ThreeKey && !ThreeKeyp) {
+	        if (skele.frames[skele.frame][boneSel][1] == undefined) {
+	            skele.frames[skele.frame][boneSel][1] = rotArr[boneSel][1];
+	        }
+	    
+	        skele.frames[skele.frame][boneSel][1] += 0.1;
+	    }
+	    
+	    if (FourKey && !FourKeyp) {
+	        skele.speed *= 0.8;
+	    }
+	    
+	    if (FiveKey && !FiveKeyp) {
+	        skele.speed *= 1.2;
 	    }
 	}
 	
@@ -343,7 +371,7 @@ function animation_Config() {
 	        bns[boneSel].roti+=180;
         }
         
-        skele.frames[skele.frame][boneSel] = bns[boneSel].roti;
+        skele.frames[skele.frame][boneSel][0] = bns[boneSel].roti;
     } else {
         for (var i=0; i<bns.length; i++) {
             dde=Math.abs(mouse_x-bns[i].x2)+Math.abs(mouse_y-bns[i].y2);
