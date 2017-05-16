@@ -46,6 +46,8 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
         context.fillStyle = changeCol(this.col,camt,camt,camt);
         context.strokeStyle = changeCol(this.col,camt,camt,camt);
 
+        //context.strokeStyle = "black";
+
         context.beginPath();
 
         context.moveTo(pnts[this.p1].sx,pnts[this.p1].sy);
