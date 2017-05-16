@@ -70,7 +70,7 @@ function findBlend2(arr, curr, len, len2) {
     return retArr;
 }
 
-function Skeleton(x, y, scale, rot, poss, frames) {
+function Skeleton(x, y, scalex, scaley, rot, poss, frames) {
     this.bones = [];
     this.points = [];
     this.polys = [];
@@ -78,7 +78,8 @@ function Skeleton(x, y, scale, rot, poss, frames) {
     this.poss = poss;
     this.x2 = x;
     this.y2 = y;
-    this.scale = scale;
+    this.scalex = scalex;
+    this.scaley = scaley;
     this.rot = rot;
     this.rotu = rot;
     this.roti = rot;

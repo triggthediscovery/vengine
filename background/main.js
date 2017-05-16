@@ -48,6 +48,7 @@ function Poly(p1, p2, p3, nx, ny, nz, col) {
     if (this.depth > points[p3].z) this.depth = points[p3].z;
     this.sdepth = 0;
     this.col = col;
+    this.norm = Math.round(Math.sqrt(((this.nx-0.47465)*(this.nx-0.47465)) + ((this.ny-0.73279)*(this.ny-0.73279)) + ((this.nz-0.48757)*(this.nz-0.48757)))*16); 
     
     function update() {
         var lx = points[p1].x;
@@ -78,8 +79,10 @@ function Poly(p1, p2, p3, nx, ny, nz, col) {
     }
 
     function draw() {
-        context.fillStyle = this.col;
-        context.strokeStyle = "#000";
+        var camt = -this.norm;
+    
+        context.fillStyle = changeCol(this.col,camt,camt,camt);
+        context.strokeStyle = changeCol(this.col,camt,camt,camt);
 
         context.beginPath();
 

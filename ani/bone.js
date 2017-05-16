@@ -5,6 +5,8 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     this.scale_front = scale_front;
     this.scale_back = scale_back;
     this.scale_length = scale_length;
+    this.scalex = 1;
+    this.scaley = 1;
     this.roti = roti; 
     this.roto = roti;
     this.help = -1;
@@ -39,14 +41,17 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
             this.y1 = this.parent.y2;
             this.rot = this.roti+this.parent.rot;
         }
-
-        this.parx = Math.cos(this.rot/57.29577)*this.scale_length;
-        this.pary = Math.sin(this.rot/57.29577)*this.scale_length; 
-        this.perx = Math.sin(this.rot/57.29577); 
-        this.pery = -Math.cos(this.rot/57.29577);
         
-        this.x2 = (Math.cos(this.rot/57.29577)*this.length*this.scale_length)+this.x1; 
-        this.y2 = (Math.sin(this.rot/57.29577)*this.length*this.scale_length)+this.y1;
+        this.scalex = this.parent.scalex;
+        this.scaley = this.parent.scaley;
+
+        this.parx = Math.cos(this.rot/57.29577)*this.scale_length*this.scalex;
+        this.pary = Math.sin(this.rot/57.29577)*this.scale_length*this.scaley; 
+        this.perx = Math.sin(this.rot/57.29577)*this.scalex; 
+        this.pery = -Math.cos(this.rot/57.29577)*this.scaley;
+        
+        this.x2 = (Math.cos(this.rot/57.29577)*this.length*this.scale_length*this.scalex)+this.x1; 
+        this.y2 = (Math.sin(this.rot/57.29577)*this.length*this.scale_length*this.scaley)+this.y1;
     }
     
     function draw() {

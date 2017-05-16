@@ -53,11 +53,26 @@ function findPt(pt) {
 
 var ani=0;
 
-var skele = new Skeleton(200, 225, 1, 0, anima[0], anima[1]);
+var skele = new Skeleton(400, 225, 1, 1, 0, anima[0], anima[1]);
 
 var bns = [];
 var pts = [];
 var pls = [new Poly(null,null,null,"#FFFFFF")];
+
+var pnts = [];
+var plys = [];
+
+for (var i=0; i<Verts.length; i++) {
+    pnts.push(new Point3(Verts[i][0], Verts[i][1], Verts[i][2]));
+}
+
+for (var i=0; i<Polys.length; i++) {
+    plys.push(new Poly3(Polys[i][0], Polys[i][1], Polys[i][2], Polys[i][3], Polys[i][4], Polys[i][5], Polys[i][6]));
+}
+
+function compare(a, b) {
+    return (b.depth) - (a.depth);
+}
 
 function init() {
     bns = [];
@@ -88,6 +103,14 @@ skele.polys = pls;
 context.lineWidth = 1;
 context.lineCap="none";
 
+for (var i=0; i<bns.length; i++) {
+    bns[i].initalize();
+}
+
+for (var i=0; i<pts.length; i++) {
+    pts[i].initalize();
+}
+
 function draw() {
     context.clearRect(0, 0, 1280, 720);
     
@@ -95,103 +118,43 @@ function draw() {
     
     context.fillRect(0,0,848,480);
     
-    context.fillStyle = 'black';
-    
-    ani++;
-    
-    var str = ""
-    
-    if (mode == 1) str = 'point mode'; 
-    else if (mode == 0) str = 'bone mode'; 
-    else if (mode == 2) str = 'poly mode';
-    else if (mode == 3) str = 'ani mode';
-    
-    if (mode == 3) {
-        if (play) {
-            skele.frame+=skele.speed;
-            
-            if (skele.frame>=(skele.frames.length-1)) {
-                skele.frame=0;
-            }
-            
-            if (skele.frame<0) {
-                skele.frame=(skele.frames.length-1);
-            }
-        }
-    } else {
-        skele.frame=0;
-        play = false;
+    for (var i=0; i<pnts.length; i++) {
+        pnts[i].update();
+        pnts[i].draw();
     }
     
-    context.fillText(str,20,20);
-    context.fillText(skele.frame,20,40);
+    if (QKey) damt+=10;
+    if (EKey) damt-=10;
+    
+    for (var i=0; i<plys.length; i++) {
+        plys[i].update();
+    }
+    
+    plys.sort(compare);
+    plys.sort(compare);
+    
+    for (var i=0; i<plys.length; i++) {
+        plys[i].draw();
+    }
 
-	for (var i=0; i<pts.length; i++) {
-	    pts[i].initalize();
-	}
-	
-	for (var i=0; i<bns.length; i++) {
-	    bns[i].initalize();
-	}
+    context.fillStyle = 'black';
+
+    skele.frame+=skele.speed;
+    
+    if (skele.frame>=(skele.frames.length-1)) {
+        skele.frame=0;
+    }
+    
+    if (skele.frame<0) {
+        skele.frame=(skele.frames.length-1);
+    }
 
     skele.update();
 	skele.draw();
-	skele.show();
-	
-	if (polySel!=-1 && pls[polySel].p1!=null && pls[polySel].p2!=null && pls[polySel].p3!=null) {
-	    context.strokeStyle = "#FFFF00";
-        context.beginPath();
 
-        context.moveTo(pls[polySel].p1.x+600,pls[polySel].p1.y+225);
-        context.lineTo(pls[polySel].p2.x+600,pls[polySel].p2.y+225);
-        context.lineTo(pls[polySel].p3.x+600,pls[polySel].p3.y+225);
-        context.lineTo(pls[polySel].p1.x+600,pls[polySel].p1.y+225);
-
-        context.closePath();
-        context.stroke();
-    }
-
-	writeOut();
-	
 	Input();
     KeyPrev();
     MousePrev();
-}
-
-function writeOut() {
-    var boneStr = 'var bones = [';
-	
-	for (var i=0; i<bns.length; i++) {
-	    boneStr += bns[i].write();
-	    if (i+1<bns.length) boneStr += ', ';
-	}
-	
-	boneStr += ']';
-	
-	var pointStr = 'var points = [';
-	
-	for (var i=0; i<pts.length; i++) {
-	    pointStr += pts[i].write();
-	    if (i+1<pts.length) pointStr += ', ';
-	}
-	
-	pointStr += ']';
-	
-	var polyStr = 'var polys = [';
-	
-	for (var i=0; i<pls.length; i++) {
-	    polyStr += pls[i].write();
-	    if (i+1<pls.length) polyStr += ', ';
-	}
-	
-	polyStr += ']';
-	
-	var aniStr = 'var anima = ' + skele.write();
-	
-	document.querySelector('.results1').innerHTML = boneStr;
-	document.querySelector('.results2').innerHTML = pointStr;
-	document.querySelector('.results3').innerHTML = polyStr;
-	document.querySelector('.results4').innerHTML = aniStr;
 }
 
 function changeCol(col, rc, gc, bc) {
