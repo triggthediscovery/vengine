@@ -1,6 +1,3 @@
-char = [[],
-        []]
-
 var canvas = document.getElementById("Screen");
 var context = canvas.getContext("2d");
 
@@ -51,14 +48,6 @@ function findPt(pt) {
     return retVal;
 }
 
-var ani=0;
-
-var skele = new Skeleton(400, 225, 1, 1, 0, anima[0], anima[1]);
-
-var bns = [];
-var pts = [];
-var pls = [new Poly(null,null,null,"#FFFFFF")];
-
 var pnts = [];
 var plys = [];
 
@@ -74,42 +63,10 @@ function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-function init() {
-    bns = [];
-    pts = [];
-    pls = [];
-
-    for (var i=0; i<bones.length; i++) {
-        bns.push(new Bone(bns[bones[i][0]], bns.length, bones[i][1], 1, 1, 1, bones[i][2]));
-    }
-    
-    bns[0].parent = skele;
-    
-    for (var i=0; i<points.length; i++) {
-        pts.push(new Point(points[i][0], points[i][1],bns[points[i][2]],0,bns[points[i][3]],0));
-    }
-    
-    for (var i=0; i<polys.length; i++) {
-        pls.push(new Poly(pts[polys[i][0]],pts[polys[i][1]],pts[polys[i][2]],polys[i][3]));
-    }
-}
-
-init();
-
-skele.bones = bns;
-skele.points = pts;
-skele.polys = pls;
+var player = new Player(400,225,bones,points,polys,anima);
 
 context.lineWidth = 1;
 context.lineCap="none";
-
-for (var i=0; i<bns.length; i++) {
-    bns[i].initalize();
-}
-
-for (var i=0; i<pts.length; i++) {
-    pts[i].initalize();
-}
 
 function draw() {
     context.clearRect(0, 0, 1280, 720);
@@ -139,20 +96,9 @@ function draw() {
 
     context.fillStyle = 'black';
 
-    skele.frame+=skele.speed;
-    
-    if (skele.frame>=(skele.frames.length-1)) {
-        skele.frame=0;
-    }
-    
-    if (skele.frame<0) {
-        skele.frame=(skele.frames.length-1);
-    }
+    player.update();
+	player.draw();
 
-    skele.update();
-	skele.draw();
-
-	Input();
     KeyPrev();
     MousePrev();
 }

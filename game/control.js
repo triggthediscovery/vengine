@@ -7,7 +7,7 @@ var WKeyp, SKeyp, AKeyp, DKeyp, EKeyp, QKeyp, ZKeyp, CKeyp, RiKeyp, FKeyp, UKeyp
         LMouse=false, RMouse=false, LMousep=false, RMousep=false,
         OneKeyp, TwoKeyp, ThreeKeyp, FourKeyp, FiveKeyp, SixKeyp, SevenKeyp, EightKeyp, NineKeyp;
 var mouse_x=0, mouse_y=0, mouse_xp=0, mouse_yp=0;
-var scrollx=0, scrolly=400, cursor_x=4000, cursor_y=150;
+var scrollx=0, scrolly=750, cursor_x=4000, cursor_y=150;
 
 var move = false;
 var anim = true;
@@ -28,120 +28,7 @@ var selected = false;
 var colBuf = "#000000";
 var play = false;
 
-function Input() {
-    if (WKey) {
-        scrolly-=20;
-    }
-    if (SKey) {
-        scrolly+=20;
-    }
-    
-    move = false;
-    
-    if (AKey) {
-        skele.scalex = -1;
-        scrollx+=20;
-        move = true;
-    }
-    if (DKey) {
-        skele.scalex = 1;
-        scrollx-=20;
-        move = true;
-    }
-}
-
-
-function point_Config() {
-    var tde = 64;
-
-    if (selected && (pointSel != -1)) {
-        pts[pointSel].x = mouse_x-600;
-        pts[pointSel].y = mouse_y-225;
-    } else {
-        for (var i=0; i<pts.length; i++) {
-            dde=Math.abs(mouse_x-pts[i].x-600)+Math.abs(mouse_y-pts[i].y-225);
-
-	        if (dde<tde) {
-		        bd=i;
-		        tde=dde;
-	        }
-	    }
-
-	    if (tde<32) {		
-		    pointSel = bd;
-	    } else {
-	        pointSel=-1;
-	    }
-    }
-}
-
-function bone_Config() {
-    var tde = 6400;
-
-    if (selected && (boneSel != -1)) {
-        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox1,bns[boneSel].oy1);
-        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy1-225)/(mouse_x-bns[boneSel].ox1-600))*57.29577)-bns[boneSel].parent.rotu+180;
-        
-        if ((mouse_x-bns[boneSel].ox1-600)>=0) {
-	        brot+=180;
-        }
-        
-        bns[boneSel].roto = brot;
-        bns[boneSel].length = bdist;
-    } else {
-        for (var i=0; i<bns.length; i++) {
-            dde=Math.abs(mouse_x-bns[i].ox2-600)+Math.abs(mouse_y-bns[i].oy2-225);
-
-            if (dde<tde) {
-	            bd=i;
-	            tde=dde;
-            }
-        }
-
-        if (tde<32) {
-	        boneSel=bd;
-	        
-	        anim=false;
-        } else {
-            boneSel=-1;
-        }
-    }
-}
-
-function animation_Config() {
-    var tde = 6400;
-
-    if (selected && (boneSel != -1)) {
-        skele.draw();
-    
-        var rn = bns[boneSel].parent.rot;
-        
-        bns[boneSel].roti = Math.round(Math.atan((mouse_y-bns[boneSel].y1)/(mouse_x-bns[boneSel].x1))*57.29577)-rn+180;
-	
-        if ((mouse_x-bns[boneSel].x1)>=0) {
-	        bns[boneSel].roti+=180;
-        }
-        
-        skele.frames[skele.frame][boneSel][0] = bns[boneSel].roti;
-    } else {
-        for (var i=0; i<bns.length; i++) {
-            dde=Math.abs(mouse_x-bns[i].x2)+Math.abs(mouse_y-bns[i].y2);
-
-	        if (dde<tde) {
-		        bd=i;
-		        tde=dde;
-	        }
-	    }
-
-	    if (tde<32) {
-		    boneSel=bd;
-	    } else {
-	        boneSel=-1;
-	    }
-    }
-}
-
-
+var scale = 1;
 
 function KeyDown(event) {
     if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {

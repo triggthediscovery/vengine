@@ -9,8 +9,8 @@ function Point3(x, y, z) {
         var nx = (this.x*1500)+scrollx;
         var ny = (this.y*1500)+scrolly;
         
-        this.sx = (nx/(-this.z+5))+400;
-        this.sy = (ny/(-this.z+5))+255;
+        this.sx = (nx/(-this.z+(5*scale)))+400;
+        this.sy = (ny/(-this.z+(5*scale)))+225;
     }
     
     function draw() {

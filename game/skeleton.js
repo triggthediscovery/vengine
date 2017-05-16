@@ -1,4 +1,4 @@
-function findBlend(arr, curr, len) {
+function findBlend(arr, curr, len, bns) {
     var retArr = [];
 
     while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
@@ -30,7 +30,7 @@ function findBlend(arr, curr, len) {
     return retArr;
 }
 
-function findBlend2(arr, curr, len, len2) {
+function findBlend2(arr, curr, len, len2, bns) {
     var retArr = [];
 
     while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
@@ -47,9 +47,8 @@ function findBlend2(arr, curr, len, len2) {
             if (s==-1 || e==arr.length) {
                 if (s!=-1) pArr.push(arr[s][i][j]);
                 else if (e!=arr.length) pArr.push(arr[e][i][j]);
-                else {
-                    if (j==0) pArr.push(bns[i].roto); else pArr.push(1);
-                }
+                else if (j==0) pArr.push(bns[i].roto); 
+                else pArr.push(1);
             } else {
                 var d = arr[s][i][j]-arr[e][i][j];
                 
@@ -70,12 +69,11 @@ function findBlend2(arr, curr, len, len2) {
     return retArr;
 }
 
-function Skeleton(x, y, scalex, scaley, rot, poss, frames) {
+function Skeleton(x, y, scalex, scaley, rot, frames) {
     this.bones = [];
     this.points = [];
     this.polys = [];
     this.frames = frames;
-    this.poss = poss;
     this.x2 = x;
     this.y2 = y;
     this.scalex = scalex;
@@ -84,13 +82,13 @@ function Skeleton(x, y, scalex, scaley, rot, poss, frames) {
     this.rotu = rot;
     this.roti = rot;
     this.frame = 0;
-    this.speed = 0.8;
+    this.speed = 0.9;
 
     function update() {
         if (move) {
-            var posArr = findBlend(this.poss,this.frame,3);
+            var posArr = findBlend(this.frames[0][0],this.frame,3,this.bones);
         } else {
-            var posArr = findBlend(anima2[0],0.5,3);
+            var posArr = findBlend(this.frames[1][0],0.5,3,this.bones);
         }
         
         this.x2 = posArr[0]+x;
@@ -100,9 +98,9 @@ function Skeleton(x, y, scalex, scaley, rot, poss, frames) {
         this.roti = posArr[2];
         
         if (move) {
-            var barr = findBlend2(this.frames,this.frame,bns.length,2);
+            var barr = findBlend2(this.frames[0][1],this.frame,this.bones.length,2,this.bones);
         } else {
-            var barr = findBlend2(anima2[1],0.5,bns.length,2);
+            var barr = findBlend2(this.frames[1][1],0.5,this.bones.length,2,this.bones);
         }
     
         for (var i = 0; i < this.bones.length; i++) {

@@ -10,7 +10,7 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
     if (this.depth > pnts[p3].z) this.depth = pnts[p3].z;
     this.sdepth = 0;
     this.col = col;
-    this.norm = Math.round(Math.sqrt(((this.nx-0.47465)*(this.nx-0.47465)) + ((this.ny-0.73279)*(this.ny-0.73279)) + ((this.nz-0.48757)*(this.nz-0.48757)))*16); 
+    this.norm = Math.round(Math.sqrt(((this.nx-0.47465)*(this.nx-0.47465)) + ((this.ny-0.73279)*(this.ny-0.73279)) + ((this.nz+0.48757)*(this.nz+0.48757)))*16); 
     
     function update() {
         var lx = pnts[p1].x;
@@ -33,9 +33,9 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
         if (pnts[p3].z < lz) lz = pnts[p3].z;
         if (pnts[p3].z > hz) hz = pnts[p3].z;
      
-        var dx = (((lx + hx)/2)*500)+scrollx;
-        var dy = (((ly + hy)/2)*500)+scrolly;
-        var dz = (((lz + hz)/2)+5)*1000;
+        var dx = (((lx + hx)/2)*1500)+scrollx;
+        var dy = (((ly + hy)/2)*1500)+scrolly;
+        var dz = (((lz + hz)/2)+(5*scale))*1000;
 
         this.depth = Math.abs(dx)+Math.abs(dy)-Math.abs(dz);
     }

@@ -53,7 +53,7 @@ function findPt(pt) {
 
 var ani=0;
 
-var skele = new Skeleton(200, 225, 1, 1, 0, anima[0], anima[1]);
+var skele = new Skeleton(200, 155, 2, 2, 0, anima[0], anima[1]);
 
 var bns = [];
 var pts = [];
