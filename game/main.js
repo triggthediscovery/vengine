@@ -63,7 +63,7 @@ function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-var player = new Player(400,225,bones,points,polys,anima);
+var player = new Player(400,120,bones,points,polys,anima);
 
 context.lineWidth = 1;
 context.lineCap="none";

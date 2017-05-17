@@ -1,79 +1,8 @@
-function findBlend(arr, curr, len, bns) {
-    var retArr = [];
-
-    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
-    
-    for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
-        var s=Math.floor(curr), e=Math.ceil(curr);
-        
-        while (s>=0 && arr[s][i] == undefined) s--;
-        while (e<arr.length && arr[e][i] == undefined) e++;
-        
-        if (s==-1 || e==arr.length) {
-            if (s!=-1) retArr.push(arr[s][i]);
-            else if (e!=arr.length) retArr.push(arr[e][i]);
-            else retArr.push(bns[i].roto);
-        } else {
-            var d = arr[s][i]-arr[e][i];
-            
-            while (d>180) d-=360;
-            while (d<-180) d+=360;
-            
-            var m = d/(s-e);
-            
-            if (isNaN(m)) m=0;
-            
-            retArr.push(arr[s][i]+(m*(curr-s)));
-        }
-    }
-    
-    return retArr;
-}
-
-function findBlend2(arr, curr, len, len2, bns) {
-    var retArr = [];
-
-    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
-    
-    for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
-        var pArr = [];
-    
-        for (var j=0; j<len2; j++) {
-            var s=Math.floor(curr), e=Math.ceil(curr);
-            
-            while (s>=0 && arr[s][i][j] == undefined) s--;
-            while (e<arr.length && arr[e][i][j] == undefined) e++;
-            
-            if (s==-1 || e==arr.length) {
-                if (s!=-1) pArr.push(arr[s][i][j]);
-                else if (e!=arr.length) pArr.push(arr[e][i][j]);
-                else if (j==0) pArr.push(bns[i].roto); 
-                else pArr.push(1);
-            } else {
-                var d = arr[s][i][j]-arr[e][i][j];
-                
-                while (d>180) d-=360;
-                while (d<-180) d+=360;
-                
-                var m = d/(s-e);
-                
-                if (isNaN(m)) m=0;
-                
-                pArr.push(arr[s][i][j]+(m*(curr-s)));
-            }
-        }
-        
-        retArr.push(pArr);
-    }
-    
-    return retArr;
-}
-
-function Skeleton(x, y, scalex, scaley, rot, frames) {
+function Skeleton(x, y, scalex, scaley, rot) {
     this.bones = [];
     this.points = [];
     this.polys = [];
-    this.frames = frames;
+    this.frames = [];
     this.x2 = x;
     this.y2 = y;
     this.scalex = scalex;
@@ -85,27 +14,9 @@ function Skeleton(x, y, scalex, scaley, rot, frames) {
     this.speed = 0.9;
 
     function update() {
-        if (move) {
-            var posArr = findBlend(this.frames[0][0],this.frame,3,this.bones);
-        } else {
-            var posArr = findBlend(this.frames[1][0],0.5,3,this.bones);
-        }
-        
-        this.x2 = posArr[0]+x;
-        this.y2 = posArr[1]+y;
-        this.rot = posArr[2];
-        this.rotu = posArr[2];
-        this.roti = posArr[2];
-        
-        if (move) {
-            var barr = findBlend2(this.frames[0][1],this.frame,this.bones.length,2,this.bones);
-        } else {
-            var barr = findBlend2(this.frames[1][1],0.5,this.bones.length,2,this.bones);
-        }
-    
-        for (var i = 0; i < this.bones.length; i++) {
-            this.bones[i].roti = barr[i][0];
-            this.bones[i].scale_length = barr[i][1];
+        for (var i = 0; i < this.frames.length; i++) {
+            this.bones[i].roti = this.frames[i][0];
+            this.bones[i].scale_length = this.frames[i][1];
             this.bones[i].update();
         }
         
