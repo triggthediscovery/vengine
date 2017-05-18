@@ -7,7 +7,7 @@ var WKeyp, SKeyp, AKeyp, DKeyp, EKeyp, QKeyp, ZKeyp, CKeyp, RiKeyp, FKeyp, UKeyp
         LMouse=false, RMouse=false, LMousep=false, RMousep=false,
         OneKeyp, TwoKeyp, ThreeKeyp, FourKeyp, FiveKeyp, SixKeyp, SevenKeyp, EightKeyp, NineKeyp;
 var mouse_x=0, mouse_y=0, mouse_xp=0, mouse_yp=0;
-var scrollx=0, scrolly=750, cursor_x=4000, cursor_y=150;
+var scrollx=0, scrolly=0.5, cursor_x=4000, cursor_y=150;
 
 var move = false;
 var anim = true;

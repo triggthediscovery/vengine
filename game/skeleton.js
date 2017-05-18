@@ -12,6 +12,7 @@ function Skeleton(x, y, scalex, scaley, rot) {
     this.roti = rot;
     this.frame = 0;
     this.speed = 0.9;
+    this.lit = -1;
 
     function update() {
         for (var i = 0; i < this.frames.length; i++) {

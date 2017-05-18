@@ -56,17 +56,21 @@ for (var i=0; i<Verts.length; i++) {
 }
 
 for (var i=0; i<Polys.length; i++) {
-    plys.push(new Poly3(Polys[i][0], Polys[i][1], Polys[i][2], Polys[i][3], Polys[i][4], Polys[i][5], Polys[i][6]));
+    plys.push(new Poly3(pnts[Polys[i][0]], pnts[Polys[i][1]], pnts[Polys[i][2]], Polys[i][3], Polys[i][4], Polys[i][5], Polys[i][6]));
 }
 
 function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-var player = new Player(400,120,bones,points,polys,anima);
+var player = new Player(0,-0.35,.2,bones,points,polys,anima);
 
 context.lineWidth = 1;
 context.lineCap="none";
+
+var lightx = 0;
+var lighty = -0.5;
+var lightz = 1;
 
 function draw() {
     context.clearRect(0, 0, 1280, 720);
@@ -77,17 +81,19 @@ function draw() {
     
     for (var i=0; i<pnts.length; i++) {
         pnts[i].update();
-        pnts[i].draw();
     }
     
-    if (QKey) damt+=10;
-    if (EKey) damt-=10;
+    if (WKey) lightz+=0.05;
+    if (SKey) lightz-=0.05;
+    if (QKey) lightx-=0.05;
+    if (EKey) lightx+=0.05;
+    if (RKey) lighty-=0.05;
+    if (FKey) lighty+=0.05;
     
     for (var i=0; i<plys.length; i++) {
         plys[i].update();
     }
     
-    plys.sort(compare);
     plys.sort(compare);
     
     for (var i=0; i<plys.length; i++) {
@@ -112,9 +118,13 @@ function changeCol(col, rc, gc, bc) {
     g = parseInt(g,16);
     b = parseInt(b,16);
     
-    r += rc;
-    g += gc;
-    b += bc;
+    r *= rc;
+    g *= gc;
+    b *= bc;
+    
+    r = Math.round(r);
+    g = Math.round(g);
+    b = Math.round(b);
     
     if (r>255) r = 255;
     if (r<0) r = 0; 

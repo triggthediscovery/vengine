@@ -32,14 +32,14 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     }
 
     function update() {
-        if (this.parent==null) {
-            this.x1 = 400;
-            this.y1 = 225;
-            this.rot = this.roti;
-        } else {
-            this.x1 = this.parent.x2;
+        if (this.parent.help==-1) {
+            this.x1 = this.parent.x2; 
             this.y1 = this.parent.y2;
             this.rot = this.roti+this.parent.rot;
+        } else {
+            this.x1 = 0; 
+            this.y1 = 0;
+            this.rot = this.roti;
         }
         
         this.scalex = this.parent.scalex;

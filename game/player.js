@@ -92,16 +92,20 @@ function MixFrames(arra, arrb, amt) {
     return retArr
 }
 
-function Player(x, y, PBones, PPoints, PPolys, animations) {
+function Player(x, y, z, PBones, PPoints, PPolys, animations) {
     this.x = x;
     this.y = y;
+    this.z = z;
     this.skele = new Skeleton(this.x, this.y, 1, 1, 0);
     this.bns = [];
     this.pts = [];
     this.pls = [];
     this.anim = animations;
     this.frame = 0;
-    this.speed = 0.8;
+    this.speed = 0;
+    this.sx;
+    this.sy;
+    this.playerPt = new Point3(this.x,this.y,this.z);
     
     function init() {
         for (var i=0; i<PBones.length; i++) {
@@ -115,7 +119,7 @@ function Player(x, y, PBones, PPoints, PPolys, animations) {
         }
         
         for (var i=0; i<PPolys.length; i++) {
-            this.pls.push(new Poly(this.pts[PPolys[i][0]],this.pts[PPolys[i][1]],this.pts[PPolys[i][2]],PPolys[i][3]));
+            this.pls.push(new Poly(this.pts[PPolys[i][0]],this.pts[PPolys[i][1]],this.pts[PPolys[i][2]],PPolys[i][3],this));
         }
         
         this.skele.bones = this.bns;
@@ -148,17 +152,33 @@ function Player(x, y, PBones, PPoints, PPolys, animations) {
             else this.speed = this.speed + 0.05;
         }
         
-        this.x += 5*this.speed;
+        this.x += 0.03*this.speed;
         
-        if ((this.x+(scrollx/5))>600) scrollx=(600-this.x)*5;
-        if ((this.x+(scrollx/5))<200) scrollx=(200-this.x)*5;
-
+        this.playerPt.x = this.x;
+        this.playerPt.y = this.y;
+        this.playerPt.z = this.z;
+        
+        this.playerPt.update();
+        
+        while (this.playerPt.sx<200) {
+            scrollx+=0.01;
+            this.playerPt.update();
+        }
+        
+        while (this.playerPt.sx>600) {
+            scrollx-=0.01;
+            this.playerPt.update();
+        }
+        
         var posArra = findBlend(this.anim[0][0],this.frame,3,this.skele.bones);
         var posArrb = findBlend(this.anim[1][0],0.5,3,this.skele.bones);
         var posArr = MixFrames(posArra,posArrb,Math.abs(this.speed));
         
-        this.skele.x2 = posArr[0]+this.x+(scrollx/5);
-        this.skele.y2 = posArr[1]+this.y+(scrolly/5);
+        this.sx = this.playerPt.sx;
+        this.sy = this.playerPt.sy;
+        
+        this.skele.x2 = this.sx; //posArr[0];
+        this.skele.y2 = this.sy; //posArr[1];
         this.skele.rot = posArr[2];
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
@@ -178,7 +198,7 @@ function Player(x, y, PBones, PPoints, PPolys, animations) {
         if (this.frame<0) {
             this.frame=(this.anim[0][0].length-1);
         }
-        
+
         this.skele.update();
     }
     

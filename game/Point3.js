@@ -6,8 +6,8 @@ function Point3(x, y, z) {
     this.sy = y;
 
     function update() {    
-        var nx = (this.x*1500)+scrollx;
-        var ny = (this.y*1500)+scrolly;
+        var nx = ((this.x+scrollx)*1500);
+        var ny = ((this.y+scrolly)*1500);
         
         this.sx = (nx/(-this.z+(5*scale)))+400;
         this.sy = (ny/(-this.z+(5*scale)))+225;

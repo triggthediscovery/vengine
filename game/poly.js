@@ -1,20 +1,29 @@
-function Poly(p1, p2, p3, color) {
+function Poly(p1, p2, p3, color, place) {
     this.p1 = p1;
     this.p2 = p2;
     this.p3 = p3;
     this.color = color;
+    this.depth = 0;
+    this.place = place;
     
     function draw() {
         if (this.p1 == null || this.p2 == null || this.p3 == null) return;
+        
+        var mx = (this.p1.x1 + this.p2.x1 + this.p3.x1)/3;
+        var my = (this.p1.y1 + this.p2.y1 + this.p3.y1)/3;
 
-        context.fillStyle = this.color;
-        context.strokeStyle = this.color;
+        var amt = GetPcol(this.place.x-(mx/150), (this.place.y+0.35)+(my/150), this.place.z, 0, 0, 1);
+        var col = changeCol(this.color, amt, amt, amt);
+    
+        context.fillStyle = col;
+        context.strokeStyle = col;
+            
         context.beginPath();
 
-        context.moveTo(this.p1.x1,this.p1.y1);
-        context.lineTo(this.p2.x1,this.p2.y1);
-        context.lineTo(this.p3.x1,this.p3.y1);
-        context.lineTo(this.p1.x1,this.p1.y1);
+        context.moveTo(this.p1.x1+place.sx,this.p1.y1+place.sy);
+        context.lineTo(this.p2.x1+place.sx,this.p2.y1+place.sy);
+        context.lineTo(this.p3.x1+place.sx,this.p3.y1+place.sy);
+        context.lineTo(this.p1.x1+place.sx,this.p1.y1+place.sy);
 
         context.closePath();
         context.fill();
