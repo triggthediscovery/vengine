@@ -1,69 +1,17 @@
 var canvas = document.getElementById("Screen");
 var context = canvas.getContext("2d");
 
-function dist(x1, y1, x2, y2) {
-    return Math.sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)));
-}
-
-function ldist(x1, y1, x2, y2, xo, yo) {
-    if (x1==x2) {
-        return new sPoint(yo-y1,xo-x1);
-    }
-    if (y1==y2) { 
-        return new sPoint(xo-x1,yo-y1);
-    }
-    
-    var m = (y1-y2)/(x1-x2);
-    var b = y1-(m*x1);
-    
-    var m2 = -1/m;
-    var b2 = yo-(m2*xo);
-    
-    var intx = (b-b2)/(m2-m);
-    var inty = (m2*intx)+b2;
-    
-    var a = dist(intx,inty,xo,yo);
-    var b = dist(intx,inty,x1,y1);
-    
-    if (xo>intx) a = -a;
-    if (x1>intx) b = -b;
-    
-    if (x1<x2) b=-b;
-    
-    if (y1>y2) a=-a;
-    
-    return new sPoint(-b,a);
-}
-
-function sPoint(x, y) {
-    this.x = x;
-    this.y = y;
-}
-
-function findPt(pt) {
-    var retVal=0;
-    
-    while (pts[retVal]!=pt) retVal++;
-    
-    return retVal;
-}
-
-var pnts = [];
-var plys = [];
-
-for (var i=0; i<Verts.length; i++) {
-    pnts.push(new Point3(Verts[i][0], Verts[i][1], Verts[i][2]));
-}
-
-for (var i=0; i<Polys.length; i++) {
-    plys.push(new Poly3(pnts[Polys[i][0]], pnts[Polys[i][1]], pnts[Polys[i][2]], Polys[i][3], Polys[i][4], Polys[i][5], Polys[i][6]));
-}
-
 function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-var player = new Player(0,-0.35,.2,bones,points,polys,anima);
+var player = new Player(0,-0.35,0.2,bones,points,polys,anima);
+var background = new Model(0,0,0,Verts,Polys,1);
+var sun = new Model(0,-0.5,1,sunVerts,sunPolys,0.2);
+
+var drawArr = background.pls.concat([player]);
+
+drawArr = drawArr.concat(sun.pls);
 
 context.lineWidth = 1;
 context.lineCap="none";
@@ -72,6 +20,8 @@ var lightx = 0;
 var lighty = -0.5;
 var lightz = 1;
 
+var ani=0;
+
 function draw() {
     context.clearRect(0, 0, 1280, 720);
     
@@ -79,31 +29,32 @@ function draw() {
     
     context.fillRect(0,0,848,480);
     
-    for (var i=0; i<pnts.length; i++) {
-        pnts[i].update();
-    }
-    
-    if (WKey) lightz+=0.05;
-    if (SKey) lightz-=0.05;
+    if (WKey) player.z+=0.05;
+    if (SKey) player.z-=0.05;
     if (QKey) lightx-=0.05;
     if (EKey) lightx+=0.05;
     if (RKey) lighty-=0.05;
     if (FKey) lighty+=0.05;
     
-    for (var i=0; i<plys.length; i++) {
-        plys[i].update();
-    }
+    ani++;
     
-    plys.sort(compare);
+    sun.x = Math.sin(ani/100);
     
-    for (var i=0; i<plys.length; i++) {
-        plys[i].draw();
+    lightx = sun.x;
+    lighty = sun.y;
+    lightz = sun.z;
+    
+    player.update();
+    background.update();
+    sun.update();
+
+    drawArr.sort(compare);
+    
+    for (var i=0; i<drawArr.length; i++) {
+        drawArr[i].draw();
     }
 
     context.fillStyle = 'black';
-
-    player.update();
-	player.draw();
 
     KeyPrev();
     MousePrev();

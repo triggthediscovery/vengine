@@ -1,3 +1,42 @@
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)));
+}
+
+function ldist(x1, y1, x2, y2, xo, yo) {
+    if (x1==x2) {
+        return new sPoint(yo-y1,xo-x1);
+    }
+    if (y1==y2) { 
+        return new sPoint(xo-x1,yo-y1);
+    }
+    
+    var m = (y1-y2)/(x1-x2);
+    var b = y1-(m*x1);
+    
+    var m2 = -1/m;
+    var b2 = yo-(m2*xo);
+    
+    var intx = (b-b2)/(m2-m);
+    var inty = (m2*intx)+b2;
+    
+    var a = dist(intx,inty,xo,yo);
+    var b = dist(intx,inty,x1,y1);
+    
+    if (xo>intx) a = -a;
+    if (x1>intx) b = -b;
+    
+    if (x1<x2) b=-b;
+    
+    if (y1>y2) a=-a;
+    
+    return new sPoint(-b,a);
+}
+
+function sPoint(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
 function Point(x, y, parent_a, parent_a_weight, parent_b, parent_b_weight) {
     this.x = x;
     this.y = y;

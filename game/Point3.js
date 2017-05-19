@@ -1,7 +1,10 @@
 function Point3(x, y, z) {
-    this.x = -x;
-    this.y = -z;
-    this.z = -y;
+    this.ox = -x;
+    this.oy = -z;
+    this.oz = -y;
+    this.x = this.ox;
+    this.y = this.oy;
+    this.z = this.oz;
     this.sx = x;
     this.sy = y;
 

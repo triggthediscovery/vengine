@@ -106,7 +106,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
     this.sx;
     this.sy;
     this.playerPt = new Point3(this.x,this.y,this.z);
-    
+
     function init() {
         for (var i=0; i<PBones.length; i++) {
             this.bns.push(new Bone(this.bns[PBones[i][0]], this.bns.length, PBones[i][1], 1, 1, 1, PBones[i][2]));
@@ -170,6 +170,12 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
             this.playerPt.update();
         }
         
+        var dx = (this.x+scrollx)*1500;
+        var dy = (this.y-0.2+scrolly)*1500;
+        var dz = (this.z+(5*scale))*1100;
+
+        this.depth = Math.abs(dx)+Math.abs(dy)-Math.abs(dz);
+        
         var posArra = findBlend(this.anim[0][0],this.frame,3,this.skele.bones);
         var posArrb = findBlend(this.anim[1][0],0.5,3,this.skele.bones);
         var posArr = MixFrames(posArra,posArrb,Math.abs(this.speed));
@@ -177,11 +183,16 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
         this.sx = this.playerPt.sx;
         this.sy = this.playerPt.sy;
         
+        var mscale = 5/(-this.z+(5*scale));
+        
         this.skele.x2 = this.sx; //posArr[0];
         this.skele.y2 = this.sy; //posArr[1];
         this.skele.rot = posArr[2];
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
+        this.skele.scaley = mscale;
+        
+        if (this.speed<0) this.skele.scalex = -mscale; else this.skele.scalex = mscale;
         
         var barra = findBlend2(this.anim[0][1],this.frame,this.skele.bones.length,2,this.skele.bones);
         var barrb = findBlend2(this.anim[1][1],0.5,this.skele.bones.length,2,this.skele.bones);
