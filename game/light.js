@@ -1,7 +1,3 @@
-function GetPcol() {
-    
-}
-
 function Light(mx, my, mz, ramt, gamt, bamt, dist) {
     this.x = mx;
     this.y = my;
