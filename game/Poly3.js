@@ -44,9 +44,9 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
 
         var dx = (this.mx+scrollx)*1500;
         var dy = (this.my+scrolly)*1500;
-        var dz = (this.mz+(5*scale))*1000;
+        var dz = ((5*scale)-this.mz)*1000;
 
-        this.depth = Math.abs(dx)+Math.abs(dy)-Math.abs(dz);
+        this.depth = Math.abs(dx)+Math.abs(dy)+Math.abs(dz);
     }
 
     function draw() {
