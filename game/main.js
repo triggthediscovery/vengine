@@ -16,9 +16,8 @@ drawArr = drawArr.concat(sun.pls);
 context.lineWidth = 1;
 context.lineCap="none";
 
-var lightx = 0;
-var lighty = -0.5;
-var lightz = 1;
+var lights = [new Light(0, -0.5, 1, 1, 0, 0, 2), new Light(0, -0.5, 1, 0, 1, 0, 2), new Light(3, -1, 10, 1, 1, 1, 0.05)];
+var scene = new Scene(lights);
 
 var ani=0;
 
@@ -38,11 +37,15 @@ function draw() {
     
     ani++;
     
-    sun.x = Math.sin(ani/100);
+    sun.x = Math.sin(ani/50)*2;
     
-    lightx = sun.x;
-    lighty = sun.y;
-    lightz = sun.z;
+    lights[0].x = sun.x;
+    lights[0].y = sun.y;
+    lights[0].z = sun.z;
+    
+    lights[1].x =-sun.x;
+    lights[1].y = sun.y;
+    lights[1].z = sun.z;
     
     player.update();
     background.update();

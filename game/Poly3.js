@@ -1,21 +1,3 @@
-function GetPcol(x, y, z, nx, ny, nz) {
-    var dx = x-lightx;
-    var dy = y-lighty; 
-    var dz = z-lightz;
-    
-    var ddist = Math.sqrt((dx*dx)+(dy*dy)+(dz*dz));
-    
-    dx = dx/ddist;
-    dy = dy/ddist;
-    dz = dz/ddist; 
-    
-    var camt = Math.round(Math.sqrt(((nx-dx)*(nx-dx)) + ((ny-dy)*(ny-dy)) + ((nz-dz)*(nz-dz)))*(8/ddist));
-    
-    camt = camt/32; 
-    
-    return camt;
-}
-
 function Poly3(p1, p2, p3, nx, ny, nz, col) {
     this.p1 = p1;
     this.p2 = p2;
@@ -68,8 +50,8 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
     }
 
     function draw() {
-        var amt = GetPcol(this.cx, this.cy, this.cz, this.nx, this.ny, this.nz);
-        var col = changeCol(this.col,amt,amt,amt);
+        var amt = scene.getLum(this.cx, this.cy, this.cz, this.nx, this.ny, this.nz);
+        var col = changeCol(this.col,amt[0],amt[1],amt[2]);
         
         context.fillStyle = col;
         context.strokeStyle = col;

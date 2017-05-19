@@ -12,8 +12,8 @@ function Poly(p1, p2, p3, color, place) {
         var mx = (this.p1.x1 + this.p2.x1 + this.p3.x1)/3;
         var my = (this.p1.y1 + this.p2.y1 + this.p3.y1)/3;
 
-        var amt = GetPcol(this.place.x-(mx/150), (this.place.y+0.35)+(my/150), this.place.z, 0, 0, 1);
-        var col = changeCol(this.color, amt, amt, amt);
+        var amt = scene.getLum(this.place.x-(mx/150), (this.place.y+0.35)+(my/150), this.place.z, 0, 0, 1);
+        var col = changeCol(this.color,amt[0],amt[1],amt[2]);
     
         context.fillStyle = col;
         context.strokeStyle = col;
