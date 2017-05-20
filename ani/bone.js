@@ -77,8 +77,8 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
         }
         context.beginPath();
         
-        context.moveTo(this.ox1+600,this.oy1+225);
-        context.lineTo(this.ox2+600,this.oy2+225);
+        context.moveTo(this.ox1*this.scalex+skele.x+400,this.oy1*this.scaley+skele.y);
+        context.lineTo(this.ox2*this.scalex+skele.x+400,this.oy2*this.scaley+skele.y);
         
         context.closePath();
         context.stroke();

@@ -23,15 +23,18 @@ function Poly(p1, p2, p3, color) {
     
     function show() {
         if (this.p1 == null || this.p2 == null || this.p3 == null) return;
+        
+        var scx = this.p1.parent_a.scalex;
+        var scy = this.p1.parent_a.scaley;
 
         context.fillStyle = this.color;
         context.strokeStyle = this.color;
         context.beginPath();
 
-        context.moveTo(this.p1.x+600,this.p1.y+225);
-        context.lineTo(this.p2.x+600,this.p2.y+225);
-        context.lineTo(this.p3.x+600,this.p3.y+225);
-        context.lineTo(this.p1.x+600,this.p1.y+225);
+        context.moveTo(this.p1.x*scx+skele.x+400,this.p1.y*scy+skele.y);
+        context.lineTo(this.p2.x*scx+skele.x+400,this.p2.y*scy+skele.y);
+        context.lineTo(this.p3.x*scx+skele.x+400,this.p3.y*scy+skele.y);
+        context.lineTo(this.p1.x*scx+skele.x+400,this.p1.y*scy+skele.y);
 
         context.closePath();
         context.fill();

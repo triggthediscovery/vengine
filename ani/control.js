@@ -8,8 +8,6 @@ var WKeyp, SKeyp, AKeyp, DKeyp, EKeyp, QKeyp, ZKeyp, CKeyp, RiKeyp, FKeyp, UKeyp
         OneKeyp, TwoKeyp, ThreeKeyp, FourKeyp, FiveKeyp, SixKeyp, SevenKeyp, EightKeyp, NineKeyp;
 var mouse_x=0, mouse_y=0, mouse_xp=0, mouse_yp=0;
 var scrollx=0, scrolly=0, cursor_x=4000, cursor_y=150;
-var scrollx=0, scrolly=0;
-
 var mode = 0;
 var anim = true;
 /*
@@ -34,6 +32,21 @@ function Input() {
 	    mode++;
 	    
 	    if (mode>3) mode = 0;
+	}
+	
+	if (UKey) skele.y-=10;
+	if (DoKey) skele.y+=10;
+	if (LKey) skele.x-=10;
+	if (RiKey) skele.x+=10;
+	
+	if (BKey) {
+	    skele.scalex *= 1.1;
+	    skele.scaley *= 1.1;
+	}
+	
+	if (VKey) {
+	    skele.scalex *= 0.9;
+	    skele.scaley *= 0.9;
 	}
 	
 	if (EKey && !EKeyp) {
@@ -181,11 +194,14 @@ function Input() {
 	    }
 	}
 	
+	var scx = skele.scalex;
+	var scy = skele.scaley;
+	
 	var tde = 100;
 	var psel = -1;
 	
 	for (var i=0; i<pts.length; i++) {
-        dde=Math.abs(mouse_x-pts[i].x-600)+Math.abs(mouse_y-pts[i].y-225);
+        dde=Math.abs(mouse_x-(pts[i].x*scx)-skele.x-400)+Math.abs(mouse_y-(pts[i].y*scx)-skele.y);
 
         if (dde<tde) {
 	        bd=i;
@@ -201,7 +217,7 @@ function Input() {
 	var bsel = -1;
 	
 	for (var i=0; i<bns.length; i++) {
-        dde=Math.abs(mouse_x-bns[i].ox2-600)+Math.abs(mouse_y-bns[i].oy2-225);
+        dde=Math.abs(mouse_x-(bns[i].ox2*scx)-skele.x-400)+Math.abs(mouse_y-(bns[i].oy2*scy)-skele.y);
 
         if (dde<tde) {
 	        bd=i;
@@ -302,13 +318,15 @@ function Input() {
 
 function point_Config() {
     var tde = 64;
+    var scx = skele.scalex;
+	var scy = skele.scaley;
 
     if (selected && (pointSel != -1)) {
-        pts[pointSel].x = mouse_x-600;
-        pts[pointSel].y = mouse_y-225;
+        pts[pointSel].x = (mouse_x-skele.x-400)/scx;
+        pts[pointSel].y = (mouse_y-skele.y)/scy;
     } else {
         for (var i=0; i<pts.length; i++) {
-            dde=Math.abs(mouse_x-pts[i].x-600)+Math.abs(mouse_y-pts[i].y-225);
+            dde=Math.abs(mouse_x-(pts[i].x*scx)-skele.x-400)+Math.abs(mouse_y-(pts[i].y*scx)-skele.y);
 
 	        if (dde<tde) {
 		        bd=i;
@@ -326,12 +344,17 @@ function point_Config() {
 
 function bone_Config() {
     var tde = 6400;
+    var scx = skele.scalex;
+	var scy = skele.scaley;
 
     if (selected && (boneSel != -1)) {
-        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox1,bns[boneSel].oy1);
-        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy1-225)/(mouse_x-bns[boneSel].ox1-600))*57.29577)-bns[boneSel].parent.rotu+180;
+        var mx = (mouse_x-skele.x-400)/scx;
+        var my = (mouse_y-skele.y)/scy;
+    
+        var bdist = dist(mx,my,bns[boneSel].ox1,bns[boneSel].oy1);
+        var brot = Math.round(Math.atan((my-bns[boneSel].oy1)/(mx-bns[boneSel].ox1))*57.29577)-bns[boneSel].parent.rotu+180;
         
-        if ((mouse_x-bns[boneSel].ox1-600)>=0) {
+        if ((mx-bns[boneSel].ox1)>=0) {
 	        brot+=180;
         }
         
@@ -339,8 +362,8 @@ function bone_Config() {
         bns[boneSel].length = bdist;
     } else {
         for (var i=0; i<bns.length; i++) {
-            dde=Math.abs(mouse_x-bns[i].ox2-600)+Math.abs(mouse_y-bns[i].oy2-225);
-
+            dde=Math.abs(mouse_x-(bns[i].ox2*scx)-skele.x-400)+Math.abs(mouse_y-(bns[i].oy2*scy)-skele.y);
+            
             if (dde<tde) {
 	            bd=i;
 	            tde=dde;
@@ -359,6 +382,8 @@ function bone_Config() {
 
 function animation_Config() {
     var tde = 6400;
+    var scx = skele.scalex;
+	var scy = skele.scaley;
 
     if (selected && (boneSel != -1)) {
         skele.draw();

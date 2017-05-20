@@ -3,8 +3,8 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
     this.p2 = p2;
     this.p3 = p3;
     this.nx = nx;
-    this.ny = ny;
-    this.nz = nz;
+    this.ny = nz;
+    this.nz = ny;
     this.depth = p1.z;
     if (this.depth > p2.z) this.depth = p2.z;
     if (this.depth > p3.z) this.depth = p3.z;
@@ -50,6 +50,8 @@ function Poly3(p1, p2, p3, nx, ny, nz, col) {
     }
 
     function draw() {
+        if (this.cz>2) return;
+    
         var amt = scene.getLum(this.cx, this.cy, this.cz, this.nx, this.ny, this.nz);
         var col = changeCol(this.col,amt[0],amt[1],amt[2]);
         

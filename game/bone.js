@@ -32,15 +32,9 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
     }
 
     function update() {
-        if (this.parent.help==-1) {
-            this.x1 = this.parent.x2; 
-            this.y1 = this.parent.y2;
-            this.rot = this.roti+this.parent.rot;
-        } else {
-            this.x1 = 0; 
-            this.y1 = 0;
-            this.rot = this.roti;
-        }
+        this.x1 = this.parent.x2; 
+        this.y1 = this.parent.y2;
+        this.rot = this.roti+this.parent.rot;
         
         this.scalex = this.parent.scalex;
         this.scaley = this.parent.scaley;
@@ -77,8 +71,8 @@ function Bone(parent, ID, length, scale_front, scale_back, scale_length, roti) {
         }
         context.beginPath();
         
-        context.moveTo(this.ox1+600,this.oy1+225);
-        context.lineTo(this.ox2+600,this.oy2+225);
+        context.moveTo(this.ox1+skele.x+400,this.oy1+skele.y);
+        context.lineTo(this.ox2+skele.x+400,this.oy2+skele.y);
         
         context.closePath();
         context.stroke();

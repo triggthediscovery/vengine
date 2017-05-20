@@ -65,6 +65,9 @@ function Point(x, y, parent_a, parent_a_weight, parent_b, parent_b_weight) {
     }
     
     function show() {
+        var scx = this.parent_a.scalex;
+        var scy = this.parent_a.scaley;
+
         if (this!=pts[pointSel]) {
             context.fillStyle = "blue";
         } else {
@@ -72,11 +75,10 @@ function Point(x, y, parent_a, parent_a_weight, parent_b, parent_b_weight) {
         }
         context.beginPath();
 
-        context.moveTo(this.x+2+600,this.y+225);
-        context.lineTo(this.x+600,this.y+2+225);
-        context.lineTo(this.x-2+600,this.y+225);
-        context.lineTo(this.x+600,this.y-2+225);
-        context.lineTo(this.x+2+600,this.y+225);
+        context.moveTo(this.x*scx+2+skele.x+400,this.y*scy+skele.y);
+        context.lineTo(this.x*scx+skele.x+400,this.y*scy+2+skele.y);
+        context.lineTo(this.x*scx-2+skele.x+400,this.y*scy+skele.y);
+        context.lineTo(this.x*scx+skele.x+400,this.y*scy-2+skele.y);
 
         context.closePath();
         context.fill();

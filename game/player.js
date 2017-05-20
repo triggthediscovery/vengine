@@ -172,9 +172,9 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
         
         var dx = (this.x+scrollx)*1500;
         var dy = (this.y-0.2+scrolly)*1500;
-        var dz = (this.z+(5*scale))*1100;
+        var dz = ((5*scale)-this.z)*1000;
 
-        this.depth = Math.abs(dx)+Math.abs(dy)-Math.abs(dz);
+        this.depth = Math.abs(dx)+Math.abs(dy)+Math.abs(dz);
         
         var posArra = findBlend(this.anim[0][0],this.frame,3,this.skele.bones);
         var posArrb = findBlend(this.anim[1][0],0.5,3,this.skele.bones);
@@ -185,8 +185,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
         
         var mscale = 5/(-this.z+(5*scale));
         
-        this.skele.x2 = this.sx; //posArr[0];
-        this.skele.y2 = this.sy; //posArr[1];
+        this.skele.x2 = posArr[0];
+        this.skele.y2 = posArr[1];
         this.skele.rot = posArr[2];
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
