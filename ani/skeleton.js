@@ -33,7 +33,7 @@ function findBlend(arr, curr, len) {
 function findBlend2(arr, curr, len, len2) {
     var retArr = [];
 
-    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
+    //while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push();
     
     for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
         var pArr = [];

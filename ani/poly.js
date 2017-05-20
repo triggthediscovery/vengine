@@ -57,19 +57,25 @@ function Poly(p1, p2, p3, color) {
     }
     
     function selected() {
+        var scx = skele.scalex;
+	    var scy = skele.scaley;
+
+        var mx = (mouse_x-skele.x-400)/scx;
+        var my = (mouse_y-skele.y)/scy;
+    
         var a, b;
         
-        a = ldist(this.p1.x,this.p1.y,this.p2.x,this.p2.y,mouse_x-600,mouse_y-225);
+        a = ldist(this.p1.x,this.p1.y,this.p2.x,this.p2.y,mx,my);
         b = ldist(this.p1.x,this.p1.y,this.p2.x,this.p2.y,this.p3.x,this.p3.y);
         
         if ((a.y/Math.abs(a.y)) != (b.y/Math.abs(b.y))) return false;
         
-        a = ldist(this.p3.x,this.p3.y,this.p2.x,this.p2.y,mouse_x-600,mouse_y-225);
+        a = ldist(this.p3.x,this.p3.y,this.p2.x,this.p2.y,mx,my);
         b = ldist(this.p3.x,this.p3.y,this.p2.x,this.p2.y,this.p1.x,this.p1.y);
         
         if ((a.y/Math.abs(a.y)) != (b.y/Math.abs(b.y))) return false;
         
-        a = ldist(this.p1.x,this.p1.y,this.p3.x,this.p3.y,mouse_x-600,mouse_y-225);
+        a = ldist(this.p1.x,this.p1.y,this.p3.x,this.p3.y,mx,my);
         b = ldist(this.p1.x,this.p1.y,this.p3.x,this.p3.y,this.p2.x,this.p2.y);
         
         if ((a.y/Math.abs(a.y)) != (b.y/Math.abs(b.y))) return false;

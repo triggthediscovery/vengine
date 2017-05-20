@@ -152,7 +152,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
             else this.speed = this.speed + 0.05;
         }
         
-        this.x += 0.03*this.speed;
+        this.x += 0.015*this.speed;
         
         this.playerPt.x = this.x;
         this.playerPt.y = this.y;
@@ -176,8 +176,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
 
         this.depth = Math.abs(dx)+Math.abs(dy)+Math.abs(dz);
         
-        var posArra = findBlend(this.anim[0][0],this.frame,3,this.skele.bones);
-        var posArrb = findBlend(this.anim[1][0],0.5,3,this.skele.bones);
+        var posArra = findBlend(this.anim[0][0],this.frame%20,3,this.skele.bones);
+        var posArrb = findBlend(this.anim[1][0],this.frame/20,3,this.skele.bones);
         var posArr = MixFrames(posArra,posArrb,Math.abs(this.speed));
         
         this.sx = this.playerPt.sx;
@@ -185,29 +185,29 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
         
         var mscale = 5/(-this.z+(5*scale));
         
-        this.skele.x2 = posArr[0];
-        this.skele.y2 = posArr[1];
+        this.skele.x2 = posArr[0]*this.skele.scalex;
+        this.skele.y2 = posArr[1]*this.skele.scaley;
         this.skele.rot = posArr[2];
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
         this.skele.scaley = mscale;
         
-        if (this.speed<0) this.skele.scalex = -mscale; else this.skele.scalex = mscale;
+        this.skele.scalex = mscale * (this.skele.scalex/Math.abs(this.skele.scalex));
         
-        var barra = findBlend2(this.anim[0][1],this.frame,this.skele.bones.length,2,this.skele.bones);
-        var barrb = findBlend2(this.anim[1][1],0.5,this.skele.bones.length,2,this.skele.bones);
+        var barra = findBlend2(this.anim[0][1],this.frame%20,this.skele.bones.length,2,this.skele.bones);
+        var barrb = findBlend2(this.anim[1][1],this.frame/20,this.skele.bones.length,2,this.skele.bones);
         var barr = MixFrames(barra,barrb,Math.abs(this.speed));
         
         this.skele.frames = barr;
 
         this.frame+=0.8;
     
-        if (this.frame>=(this.anim[0][0].length-1)) {
+        if (this.frame>=80) {
             this.frame=0;
         }
         
         if (this.frame<0) {
-            this.frame=(this.anim[0][0].length-1);
+            this.frame=80;
         }
 
         this.skele.update();

@@ -23,9 +23,20 @@ VKey - paste
 var pointSel = -1;
 var boneSel = -1;
 var polySel = -1;
+var frameSel = -1;
 var selected = false;
 var colBuf = "#000000";
 var play = false;
+
+function copy(o) {
+   var output, v, key;
+   output = Array.isArray(o) ? [] : {};
+   for (key in o) {
+       v = o[key];
+       output[key] = (typeof v === "object") ? copy(v) : v;
+   }
+   return output;
+}
 
 function Input() {
     if (ZKey && !ZKeyp) {
@@ -39,28 +50,30 @@ function Input() {
 	if (LKey) skele.x-=10;
 	if (RiKey) skele.x+=10;
 	
-	if (BKey) {
-	    skele.scalex *= 1.1;
-	    skele.scaley *= 1.1;
-	}
-	
-	if (VKey) {
-	    skele.scalex *= 0.9;
-	    skele.scaley *= 0.9;
-	}
-	
+	var scx = skele.scalex;
+    var scy = skele.scaley;
+
+    var mx = (mouse_x-skele.x-400)/scx;
+    var my = (mouse_y-skele.y)/scy;
+
 	if (EKey && !EKeyp) {
 	    if (mode==0) {
-	        var bdist = dist(mouse_x-600,mouse_y-225,bns[boneSel].ox2,bns[boneSel].oy2);
-	        var brot = Math.round(Math.atan((mouse_y-bns[boneSel].oy2-225)/(mouse_x-bns[boneSel].ox2-600))*57.29577)-bns[boneSel].rotu+180;
+	        var bdist = dist(mx,my,bns[boneSel].ox2,bns[boneSel].oy2);
+	        var brot = Math.round(Math.atan((my-bns[boneSel].oy2)/(mx-bns[boneSel].ox2))*57.29577)-bns[boneSel].rotu+180;
 	        
-	        if ((mouse_x-bns[boneSel].ox2-600)>0) {
+	        if ((mx-bns[boneSel].ox2)>0) {
 		        brot+=180;
 	        }
 
 	        bns.push(new Bone(bns[boneSel], bns.length, bdist, 1, 1, 1, brot));
+	        
+	        var le = skele.frames.length;
+	        
+	        for (var i=0; i<le; i++) {
+                skele.frames[i].push([undefined, undefined]);
+            }
 	    } else if (mode==1) {
-	        pts.push(new Point(mouse_x-600, mouse_y-225,bns[boneSel],1,null,0));
+	        pts.push(new Point(mx, my,bns[boneSel],1,null,0));
 	    } else if (mode==2) {
 	        var found=false;
 	        
@@ -82,10 +95,12 @@ function Input() {
         	var addArr = [];
             
             for (var i=0; i<skele.frames[0].length; i++) {
-                addArr.push(undefined);
+                addArr.push([undefined,undefined]);
             }
             
             skele.frames.push(addArr);
+            
+            skele.poss.push([undefined,undefined,undefined]);
 	    }
 	}
 	
@@ -96,6 +111,11 @@ function Input() {
 	        pts.splice(pointSel,1);
 	    } else if (mode == 2) {
 	        pls.splice(polySel,1);
+	    } else if (mode == 3) {
+	        skele.frames.splice(Math.round(skele.frame),1);
+	        skele.poss.splice(Math.round(skele.frame),1);
+	        
+	        if (skele.frame>=skele.frames.length) skele.frame--;
 	    }
 	}
 	
@@ -136,28 +156,28 @@ function Input() {
 	        play = !play;
 	    }
 	    
-	    if (WKey && !WKeyp) {
+	    if (WKey) {
 	        if (skele.poss[skele.frame][1]==undefined) {
 	            skele.poss[skele.frame][1] = posArr[1];
 	        }
 	    
 	        skele.poss[skele.frame][1]--;
 	    }
-	    if (SKey && !SKeyp) {
+	    if (SKey) {
 	        if (skele.poss[skele.frame][1]==undefined) {
 	            skele.poss[skele.frame][1] = posArr[1];
 	        }
 	    
 	        skele.poss[skele.frame][1]++;
 	    }
-	    if (AKey && !AKeyp) {
+	    if (AKey) {
 	        if (skele.poss[skele.frame][0]==undefined) {
 	            skele.poss[skele.frame][0] = posArr[0];
 	        }
 	    
 	        skele.poss[skele.frame][0]++;
 	    }
-	    if (DKey && !DKeyp) {
+	    if (DKey) {
 	        if (skele.poss[skele.frame][0]==undefined) {
 	            skele.poss[skele.frame][0] = posArr[0];
 	        }
@@ -192,11 +212,28 @@ function Input() {
 	    if (FiveKey && !FiveKeyp) {
 	        skele.speed *= 1.2;
 	    }
+	    
+	    if (CKey && !CKeyp) {
+	        frameSel = Math.round(skele.frame);
+	    }
+	    
+	    if (VKey && !VKeyp && frameSel != -1) {
+	        var curr = Math.round(skele.frame);
+	        
+	        var anibe = skele.frames.slice(0,curr);
+	        var anien = skele.frames.slice(curr);
+	        var aniin = [copy(skele.frames[frameSel])];
+	        
+	        skele.frames = anibe.concat(aniin).concat(anien);
+	        
+	        anibe = skele.poss.slice(0,curr);
+	        anien = skele.poss.slice(curr);
+	        aniin = [copy(skele.poss[frameSel])];
+	        
+	        skele.poss = anibe.concat(aniin).concat(anien);
+	    }
 	}
-	
-	var scx = skele.scalex;
-	var scy = skele.scaley;
-	
+
 	var tde = 100;
 	var psel = -1;
 	
@@ -289,6 +326,14 @@ function Input() {
 	        pls.splice(polySel,1);
 	        
 	        pls.push(hold);
+	    }
+	    
+	    if (AKey && !AKeyp) {
+	        var hold = pls[polySel]
+	    
+	        pls.splice(polySel,1);
+	        
+	        pls.unshift(hold);
 	    }
     }
 
@@ -653,33 +698,31 @@ function MousePrev() {
     mouse_yp = mouse_y;
 }
 function MouseWheelHandler(event) {
-    
-    if (pause==true) {return;}
-    
-    var olzoom = zoom;
-    
-    var dats=event.wheelDelta;
-    
-    dats=dats*zoom*2;
-
-    zoom += (dats) / 2000;
-
-    var fixx, fixy, ch;
-
-    fixx = ((mouse_x + scrollx) / olzoom);
-    fixy = ((mouse_y + scrolly) / olzoom);
-    ch = Math.abs((dats) / 2000);
-
-    if (event.wheelDelta > 0) {
-        scrollx += fixx * ch;
+    if (mouse_x<400) {
+        if (event.deltaY < 0) {
+            skele.scalex *= 1.1;
+	        skele.scaley *= 1.1;
+	        skele.x = ((skele.x-mouse_x) * 1.1) + mouse_x;
+	        skele.y = ((skele.y-mouse_y) * 1.1) + mouse_y;
+        } else {
+            skele.scalex *= 0.9;
+	        skele.scaley *= 0.9;
+	        skele.x = ((skele.x-mouse_x) * 0.9) + mouse_x;
+	        skele.y = ((skele.y-mouse_y) * 0.9) + mouse_y;
+        }
     } else {
-        scrollx -= fixx * ch;
+        if (event.deltaY < 0) {
+            skele.scalex *= 1.1;
+	        skele.scaley *= 1.1;
+	        skele.x = ((skele.x+400-mouse_x) * 1.1) + mouse_x - 400;
+	        skele.y = ((skele.y-mouse_y) * 1.1) + mouse_y;
+        } else {
+            skele.scalex *= 0.9;
+	        skele.scaley *= 0.9;
+	        skele.x = ((skele.x+400-mouse_x) * 0.9) + mouse_x - 400;
+	        skele.y = ((skele.y-mouse_y) * 0.9) + mouse_y;
+        }
     }
-    if (event.wheelDelta > 0) {
-        scrolly += fixy * ch;
-    } else {
-        scrolly -= fixy * ch;
-    }
-
+    
     return false;
 }

@@ -123,8 +123,7 @@ function draw() {
         play = false;
     }
     
-    context.fillText(str,20,20);
-    context.fillText(skele.frame,20,40);
+    
 
 	for (var i=0; i<pts.length; i++) {
 	    pts[i].initalize();
@@ -142,14 +141,17 @@ function draw() {
 	    context.strokeStyle = "#FFFF00";
         context.beginPath();
 
-        context.moveTo(pls[polySel].p1.x+600,pls[polySel].p1.y+225);
-        context.lineTo(pls[polySel].p2.x+600,pls[polySel].p2.y+225);
-        context.lineTo(pls[polySel].p3.x+600,pls[polySel].p3.y+225);
-        context.lineTo(pls[polySel].p1.x+600,pls[polySel].p1.y+225);
+        context.moveTo((pls[polySel].p1.x*skele.scalex)+skele.x+400,(pls[polySel].p1.y*skele.scaley)+skele.y);
+        context.lineTo((pls[polySel].p2.x*skele.scalex)+skele.x+400,(pls[polySel].p2.y*skele.scaley)+skele.y);
+        context.lineTo((pls[polySel].p3.x*skele.scalex)+skele.x+400,(pls[polySel].p3.y*skele.scaley)+skele.y);
+        context.lineTo((pls[polySel].p1.x*skele.scalex)+skele.x+400,(pls[polySel].p1.y*skele.scaley)+skele.y);
 
         context.closePath();
         context.stroke();
     }
+    
+    context.fillText(str,20,20);
+    context.fillText(skele.frame,20,40);
 
 	writeOut();
 	
@@ -235,4 +237,5 @@ document.addEventListener("keyup", KeyUp, false);
 document.addEventListener("mousedown", MouseDown, false);
 document.addEventListener("mouseup", MouseUp, false);
 document.addEventListener("mousemove", MouseMove, false);
+document.addEventListener("wheel", MouseWheelHandler, false);
 		
