@@ -5,7 +5,7 @@ function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-var player = new Player(0,-0.35,0.2,bones,points,polys,anima);
+var player = new Player(0,-0.35,0.2,bones,points,polys,anima,undefined);
 var background = new Model(0,0,0,Verts,Polys,1);
 var sun = new Model(0,-0.5,1,sunVerts,sunPolys,0.2);
 var cloud1 = new Model(1,-3.1,1,cloudVerts,cloudPolys,0.5);
@@ -27,6 +27,23 @@ context.lineCap="none";
 var lights = [new Light(0.35, -0.75, -0.5, 1, 0.2, 0, 3), new Light(-0.35, -0.75, -0.5, 1, 0.2, 0, 3), new Light(0,-1, -16, 0.4, 0.4, 1, 0.5), new Light(0,-1, -16, 0, 0, 0.3, 0.5), new Light(0,-7, -16, 1, 1, 1, 0.05), new Light(0.35, -0.75, -3.4, 1, 0.2, 0, 3), new Light(-0.35, -0.75, -3.4, 1, 0.2, 0, 3)];
 var scene = new Scene(lights);
 
+var aniNodes = [
+new AniNode(anima[0], 0, 0.08, anima[0][0].length, [
+    new ExitState(0,0,-1,-1), 
+    new ExitState(3,1,2,0), 
+    new ExitState(4,1,2,0)
+    ], 0, undefined, 0),
+
+new AniNode(anima[1], 0, 0.01, anima[1][0].length, [
+    new ExitState(0,1,-1,-1), 
+    new ExitState(1,0,2,0), 
+    new ExitState(2,0,2,0)
+    ], 0, undefined, 1)
+];
+
+var aniEn = new AniController(aniNodes, 1, [], player);
+player.aniEn = aniEn;
+
 var ani=0;
 
 function draw() {
@@ -39,7 +56,7 @@ function draw() {
     if (WKey) player.z+=0.05;
     if (SKey) player.z-=0.05;
     
-    ani+=5;
+    ani+=0.5;
     
     //lights[0].x = (Math.sin(ani/5)/10)+0.35;
     //lights[1].x = (Math.cos(ani/5)/10)-0.35;

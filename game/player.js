@@ -1,98 +1,4 @@
-function findBlend(arr, curr, len, bns) {
-    var retArr = [];
-
-    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
-    
-    for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
-        var s=Math.floor(curr), e=Math.ceil(curr);
-        
-        while (s>=0 && arr[s][i] == undefined) s--;
-        while (e<arr.length && arr[e][i] == undefined) e++;
-        
-        if (s==-1 || e==arr.length) {
-            if (s!=-1) retArr.push(arr[s][i]);
-            else if (e!=arr.length) retArr.push(arr[e][i]);
-            else retArr.push(bns[i].roto);
-        } else {
-            var d = arr[s][i]-arr[e][i];
-            
-            while (d>180) d-=360;
-            while (d<-180) d+=360;
-            
-            var m = d/(s-e);
-            
-            if (isNaN(m)) m=0;
-            
-            retArr.push(arr[s][i]+(m*(curr-s)));
-        }
-    }
-    
-    return retArr;
-}
-
-function findBlend2(arr, curr, len, len2, bns) {
-    var retArr = [];
-
-    while (arr[Math.ceil(curr)].length<len) arr[Math.ceil(curr)].push(undefined);
-    
-    for (var i=0; i<arr[Math.ceil(curr)].length; i++) {
-        var pArr = [];
-    
-        for (var j=0; j<len2; j++) {
-            var s=Math.floor(curr), e=Math.ceil(curr);
-            
-            while (s>=0 && arr[s][i][j] == undefined) s--;
-            while (e<arr.length && arr[e][i][j] == undefined) e++;
-            
-            if (s==-1 || e==arr.length) {
-                if (s!=-1) pArr.push(arr[s][i][j]);
-                else if (e!=arr.length) pArr.push(arr[e][i][j]);
-                else if (j==0) pArr.push(bns[i].roto); 
-                else pArr.push(1);
-            } else {
-                var d = arr[s][i][j]-arr[e][i][j];
-                
-                while (d>180) d-=360;
-                while (d<-180) d+=360;
-                
-                var m = d/(s-e);
-                
-                if (isNaN(m)) m=0;
-                
-                pArr.push(arr[s][i][j]+(m*(curr-s)));
-            }
-        }
-        
-        retArr.push(pArr);
-    }
-    
-    return retArr;
-}
-
-function MixFrames(arra, arrb, amt) {
-    var retArr = [];
-    
-    for (var i=0; i<arra.length; i++) {
-        if (Array.isArray(arra[i])) {
-            var pushArr = [];
-        
-            for (var j=0; j<arra[i].length; j++) {
-                while ((arra[i][j]-arrb[i][j])>180) arra[i][j] -= 360;
-                while ((arrb[i][j]-arra[i][j])>180) arrb[i][j] -= 360;
-            
-                pushArr.push((arra[i][j]*amt) + (arrb[i][j]*(1-amt)));
-            }
-            
-            retArr.push(pushArr);
-        } else {
-            retArr.push((arra[i]*amt) + (arrb[i]*(1-amt)));
-        }
-    }
-    
-    return retArr
-}
-
-function Player(x, y, z, PBones, PPoints, PPolys, animations) {
+function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -106,6 +12,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
     this.sx;
     this.sy;
     this.playerPt = new Point3(this.x,this.y,this.z);
+    this.aniEn = aniEn;
 
     function init() {
         for (var i=0; i<PBones.length; i++) {
@@ -136,6 +43,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
     }
 
     function update() {
+        this.aniEn.update();
+        
         if ((AKey || DKey) && !(AKey && DKey)) {
             if (AKey) {
                 this.speed -= 0.1;
@@ -152,38 +61,29 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
             else this.speed = this.speed + 0.05;
         }
         
-        this.x += 0.015*this.speed;
-        
+        this.x += 0.02*this.speed;
+    
         this.playerPt.x = this.x;
         this.playerPt.y = this.y;
         this.playerPt.z = this.z;
         
         this.playerPt.update();
-        
-        while (this.playerPt.sx<200) {
-            scrollx+=0.01;
-            this.playerPt.update();
-        }
-        
-        while (this.playerPt.sx>600) {
-            scrollx-=0.01;
-            this.playerPt.update();
-        }
-        
+    
         var dx = (this.x+scrollx)*1500;
         var dy = (this.y-0.2+scrolly)*1500;
         var dz = ((5*scale)-this.z)*1000;
 
         this.depth = Math.abs(dx)+Math.abs(dy)+Math.abs(dz);
-        
-        var posArra = findBlend(this.anim[0][0],this.frame%20,3,this.skele.bones);
-        var posArrb = findBlend(this.anim[1][0],this.frame/20,3,this.skele.bones);
-        var posArr = MixFrames(posArra,posArrb,Math.abs(this.speed));
-        
+
         this.sx = this.playerPt.sx;
         this.sy = this.playerPt.sy;
         
         var mscale = 5/(-this.z+(5*scale));
+        
+        var fr = this.aniEn.getAni();
+        
+        var posArr = fr[0];
+        var barr = fr[1];
         
         this.skele.x2 = posArr[0]*this.skele.scalex;
         this.skele.y2 = posArr[1]*this.skele.scaley;
@@ -193,11 +93,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations) {
         this.skele.scaley = mscale;
         
         this.skele.scalex = mscale * (this.skele.scalex/Math.abs(this.skele.scalex));
-        
-        var barra = findBlend2(this.anim[0][1],this.frame%20,this.skele.bones.length,2,this.skele.bones);
-        var barrb = findBlend2(this.anim[1][1],this.frame/20,this.skele.bones.length,2,this.skele.bones);
-        var barr = MixFrames(barra,barrb,Math.abs(this.speed));
-        
+
         this.skele.frames = barr;
 
         this.frame+=0.8;
