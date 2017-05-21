@@ -220,17 +220,29 @@ function Input() {
 	    if (VKey && !VKeyp && frameSel != -1) {
 	        var curr = Math.round(skele.frame);
 	        
-	        var anibe = skele.frames.slice(0,curr);
-	        var anien = skele.frames.slice(curr);
+	        var anibe = skele.frames.slice(0,curr+1);
+	        var anien = skele.frames.slice(curr+1);
 	        var aniin = [copy(skele.frames[frameSel])];
 	        
 	        skele.frames = anibe.concat(aniin).concat(anien);
 	        
-	        anibe = skele.poss.slice(0,curr);
-	        anien = skele.poss.slice(curr);
+	        anibe = skele.poss.slice(0,curr+1);
+	        anien = skele.poss.slice(curr+1);
 	        aniin = [copy(skele.poss[frameSel])];
 	        
 	        skele.poss = anibe.concat(aniin).concat(anien);
+	        
+	        skele.frame++;
+	    }
+	    
+	    if (XKey && !XKeyp) {
+	        var curr = Math.round(skele.frame);
+	    
+	        for (var i=0; i<skele.frames[curr].length; i++) {
+	            skele.frames[curr][i] = [undefined,undefined];
+	        }
+	        
+	        skele.poss[curr] = [undefined, undefined, undefined];
 	    }
 	}
 
