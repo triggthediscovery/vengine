@@ -53,6 +53,7 @@ function AniController(states, start, exit, owner) {
     this.exit = exit;
     this.owner = owner;
     this.weight = 1;
+    this.lastc = [];
     
     function getAni() {
         var retArr = [];
@@ -80,6 +81,8 @@ function AniController(states, start, exit, owner) {
             }
         }
         
+        this.lastc = retArr;
+        
         return retArr;
     }
     
@@ -101,7 +104,7 @@ function AniController(states, start, exit, owner) {
                 currStates[currStates.length-1].wMode = exit.nextAniMode;
             else
                 currStates[currStates.length-1].wMode = onode.wMode;
-            //currStates[currStates.length-1].update(false);
+            if (exit.enterTime != -1) currStates[currStates.length-1].time = exit.enterTime;
         } else {
             currStates[found].weight = onode.weight;
             currStates[found].owner = onode.owner;
@@ -111,8 +114,7 @@ function AniController(states, start, exit, owner) {
                 currStates[found].wMode = exit.nextAniMode;
             else
                 currStates[found].wMode = onode.wMode;
-            currStates[found].time = 0;
-            //currStates[found].update(false);
+            if (exit.enterTime != -1) currStates[found].time = exit.enterTime;
         }
     }
     
@@ -123,30 +125,25 @@ function AniController(states, start, exit, owner) {
             cState.update(true);
             
             for (var j=0; j<cState.exit.length; j++) {
-                if (cState.exit[j].id==0) {
-                    if (cState.time>1) {
-                        updateNode(cState.exit[j], cState, this.states, this.currStates);
-                    }
-                } else if (cState.exit[j].id==1) {
-                    if (AKey && !AKeyp) {
-                        updateNode(cState.exit[j], cState, this.states, this.currStates);
-                    }
-                } else if (cState.exit[j].id==2) {
-                    if (DKey && !DKeyp) {
-                        updateNode(cState.exit[j], cState, this.states, this.currStates);
-                    }
-                } else if (cState.exit[j].id==3) {
-                    if (!AKey && AKeyp) {
-                        updateNode(cState.exit[j], cState, this.states, this.currStates);
-                    }
-                } else if (cState.exit[j].id==4) {
-                    if (!DKey && DKeyp) {
-                        updateNode(cState.exit[j], cState, this.states, this.currStates);
-                    }
+                if (eventList.getEvent(cState.exit[j].id, cState) && cState.weight==1) {
+                    updateNode(cState.exit[j], cState, this.states, this.currStates);
                 }
             }
             
             if (cState.time>1 || cState.weight==0) {
+                if (cState.time>1) {
+                    cState.time=1;
+                    var ret = cState.getAni();
+                    
+                    var cx = (ret[0][0]/580)*cState.weight * (this.owner.skele.scalex/Math.abs(this.owner.skele.scalex));
+                    if (Math.abs(cx)<0.15) cx = 0;
+                    this.owner.x += cx;
+
+                    var cy = (ret[0][1]/580)*cState.weight * (this.owner.skele.scaley/Math.abs(this.owner.skele.scaley));
+                    if (Math.abs(cy)<0.15) cy = 0;
+                    this.owner.y += cy;
+                }
+                
                 this.currStates.splice(i,1);
                 
                 j--;

@@ -44,25 +44,23 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
 
     function update() {
         this.aniEn.update();
+
+        this.speed = 0;
         
-        if ((AKey || DKey) && !(AKey && DKey)) {
-            if (AKey) {
-                this.speed -= 0.1;
-                if (this.speed<-1) this.speed = -1;
-            } else {
-                this.speed += 0.1;
-                if (this.speed>1) this.speed = 1;
+        for (var i=0; i<this.aniEn.currStates.length; i++) {
+            if (this.aniEn.currStates[i].id == 0) {
+                this.speed = this.aniEn.currStates[i].weight * (this.skele.scalex/Math.abs(this.skele.scalex));
+            } if (this.aniEn.currStates[i].id == 1 && this.speed == 0) {
+                //this.speed = 0.001;
             }
-            
-            if (this.speed<0) this.skele.scalex = -1; else this.skele.scalex = 1;
-        } else {
-            if (Math.abs(this.speed)<0.05) this.speed = 0;
-            else if (this.speed>0) this.speed = this.speed - 0.05; 
-            else this.speed = this.speed + 0.05;
+        }
+        
+        if ((Keys[65] || Keys[68]) && !(Keys[65] && Keys[68]) && this.speed != 0) {
+             if (Keys[65]) this.skele.scalex = -1; else this.skele.scalex = 1;
         }
         
         this.x += 0.02*this.speed;
-    
+
         this.playerPt.x = this.x;
         this.playerPt.y = this.y;
         this.playerPt.z = this.z;
@@ -85,8 +83,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         var posArr = fr[0];
         var barr = fr[1];
         
-        this.skele.x2 = posArr[0]*this.skele.scalex;
-        this.skele.y2 = posArr[1]*this.skele.scaley;
+        this.skele.x2 = posArr[0]*this.skele.scalex/2;
+        this.skele.y2 = posArr[1]*this.skele.scaley/2;
         this.skele.rot = posArr[2];
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
