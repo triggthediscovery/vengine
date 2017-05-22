@@ -34,6 +34,12 @@ new AKeyDownEvent(),
 new AKeyUpEvent(),
 new DKeyDownEvent(),
 new DKeyUpEvent(),
+new JKeyDownEvent(),
+new JKeyUpEvent(),
+new KKeyDownEvent(),
+new KKeyUpEvent(),
+new LKeyDownEvent(),
+new LKeyUpEvent(),
 new SpaceKeyDownEvent(),
 new SpaceKeyUpEvent(),
 new CtrlKeyDownEvent(),
@@ -49,6 +55,12 @@ onAKeyDown
 onAKeyUp
 onDKeyDown
 onDKeyUp
+onJKeyDown
+onJKeyUp
+onKKeyDown
+onKKeyUp
+onLKeyDown
+onLKeyUp
 onSpaceKeyDown
 onSpaceKeyUp
 onCtrlKeyDown
@@ -61,8 +73,8 @@ onAniEnd
 function AKeyDownEvent() {
     this.name = "onAKeyDown";
     
-    function update() {
-        if (Keys[65]) return true; else return false;
+    function update(obj) {
+        if (obj.owner.Keys[65]) return true; else return false;
     }
     
     this.update = update;
@@ -71,8 +83,8 @@ function AKeyDownEvent() {
 function AKeyUpEvent() {
     this.name = "onAKeyUp";
     
-    function update() {
-        if (!Keys[65] && Keysp[65]) return true; else return false;
+    function update(obj) {
+        if (!obj.owner.Keys[65] && obj.owner.Keysp[65]) return true; else return false;
     }
     
     this.update = update;
@@ -81,8 +93,8 @@ function AKeyUpEvent() {
 function DKeyDownEvent() {
     this.name = "onDKeyDown";
     
-    function update() {
-        if (Keys[68]) return true; else return false;
+    function update(obj) {
+        if (obj.owner.Keys[68]) return true; else return false;
     }
     
     this.update = update;
@@ -91,8 +103,70 @@ function DKeyDownEvent() {
 function DKeyUpEvent() {
     this.name = "onDKeyUp";
     
-    function update() {
-        if (!Keys[68] && Keysp[68]) return true; else return false;
+    function update(obj) {
+        if (!obj.owner.Keys[68] && obj.owner.Keysp[68]) return true; else return false;
+    }
+    
+    this.update = update;
+}
+
+///////
+
+function JKeyDownEvent() {
+    this.name = "onJKeyDown";
+    
+    function update(obj) {
+        if (obj.owner.Keys[74]) return true; else return false;
+    }
+    
+    this.update = update;
+}
+
+function JKeyUpEvent() {
+    this.name = "onJKeyUp";
+    
+    function update(obj) {
+        if (!obj.owner.Keys[74] && obj.owner.Keysp[74]) return true; else return false;
+    }
+    
+    this.update = update;
+}
+
+function KKeyDownEvent() {
+    this.name = "onKKeyDown";
+    
+    function update(obj) {
+        if (obj.owner.Keys[75]) return true; else return false;
+    }
+    
+    this.update = update;
+}
+
+function KKeyUpEvent() {
+    this.name = "onKKeyUp";
+    
+    function update(obj) {
+        if (!obj.owner.Keys[75] && obj.owner.Keysp[75]) return true; else return false;
+    }
+    
+    this.update = update;
+}
+
+function LKeyDownEvent() {
+    this.name = "onLKeyDown";
+    
+    function update(obj) {
+        if (obj.owner.Keys[76]) return true; else return false;
+    }
+    
+    this.update = update;
+}
+
+function LKeyUpEvent() {
+    this.name = "onLKeyUp";
+    
+    function update(obj) {
+        if (!obj.owner.Keys[76] && obj.owner.Keysp[76]) return true; else return false;
     }
     
     this.update = update;
@@ -101,8 +175,8 @@ function DKeyUpEvent() {
 function SpaceKeyDownEvent() {
     this.name = "onSpaceKeyDown";
     
-    function update() {
-        if (Keys[32] && !Keysp[32]) return true; else return false;
+    function update(obj) {
+        if (obj.owner.Keys[32] && !obj.owner.Keysp[32]) return true; else return false;
     }
     
     this.update = update;
@@ -111,8 +185,8 @@ function SpaceKeyDownEvent() {
 function SpaceKeyUpEvent() {
     this.name = "onSpaceKeyUp";
     
-    function update() {
-        if (!Keys[32]) return true; else return false;
+    function update(obj) {
+        if (!obj.owner.Keys[32]) return true; else return false;
     }
     
     this.update = update;
@@ -121,8 +195,8 @@ function SpaceKeyUpEvent() {
 function CtrlKeyDownEvent() {
     this.name = "onCtrlKeyDown";
     
-    function update() {
-        if (Keys[17] && !Keysp[17]) return true; else return false;
+    function update(obj) {
+        if (obj.owner.Keys[17] && !obj.owner.Keysp[17]) return true; else return false;
     }
     
     this.update = update;
@@ -131,8 +205,8 @@ function CtrlKeyDownEvent() {
 function CtrlKeyUpEvent() {
     this.name = "onCtrlKeyUp";
     
-    function update() {
-        if (!Keys[17]) return true; else return false;
+    function update(obj) {
+        if (!obj.owner.Keys[17]) return true; else return false;
     }
     
     this.update = update;
@@ -141,8 +215,8 @@ function CtrlKeyUpEvent() {
 function ShiftKeyDownEvent() {
     this.name = "onShiftKeyDown";
     
-    function update() {
-        if (Keys[16] && !Keysp[16]) return true; else return false;
+    function update(obj) {
+        if (obj.owner.Keys[16] && !obj.owner.Keysp[16]) return true; else return false;
     }
     
     this.update = update;
@@ -151,8 +225,8 @@ function ShiftKeyDownEvent() {
 function ShiftKeyUpEvent() {
     this.name = "onShiftKeyUp";
     
-    function update() {
-        if (!Keys[16]) return true; else return false;
+    function update(obj) {
+        if (!obj.owner.Keys[16]) return true; else return false;
     }
     
     this.update = update;
@@ -162,7 +236,7 @@ function AniEndEvent() {
     this.name = "onAniEnd";
     
     function update(obj) {
-        if (obj.time>1) return true; else return false;
+        if (obj.time>obj.endTime) return true; else return false;
     }
     
     this.update = update;

@@ -13,6 +13,9 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.sy;
     this.playerPt = new Point3(this.x,this.y,this.z);
     this.aniEn = aniEn;
+    
+    this.Keys = [];
+    this.Keysp = [];
 
     function init() {
         for (var i=0; i<PBones.length; i++) {

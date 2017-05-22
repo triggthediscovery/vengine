@@ -6,6 +6,7 @@ function compare(a, b) {
 }
 
 var player = new Player(0,-0.35,0.5,bones,points,polys,anima,undefined);
+var enemy  = new Player(0.5,-0.35,0.5,bones,points,polys,anima,undefined);
 var background = new Model(0,0,0,Verts,Polys,1);
 var sun = new Model(0,-0.5,1,sunVerts,sunPolys,0.2);
 /*
@@ -16,6 +17,7 @@ var cloud4 = new Model(0.4,-3.6,1,cloudVerts,cloudPolys,0.7);
 */
 var drawArr = background.pls.concat([player]);
 
+drawArr = drawArr.concat([enemy]);
 drawArr = drawArr.concat(sun.pls);
 /*
 drawArr = drawArr.concat(cloud1.pls);
@@ -34,35 +36,59 @@ new AniNode(anima[0], 0, 0.08, anima[0][0].length, [
     new ExitState(      "onAniEnd",0,-1,-1, 0), 
     new ExitState(      "onAKeyUp",1, 2, 0, 0), 
     new ExitState(      "onDKeyUp",1, 2, 0, 0),
-    new ExitState("onSpaceKeyDown",2, 2, 0, 0),
-    new ExitState( "onCtrlKeyDown",3, 2, 0, 0),
-    new ExitState("onShiftKeyDown",4, 2, 0, 0)
-    ], 0, undefined, 0),
+    new ExitState(    "onJKeyDown",2, 2, 0, 0),
+    new ExitState(    "onLKeyDown",3, 2, 0, 0),
+    new ExitState("onShiftKeyDown",4, 2, 0, 0),
+    new ExitState(    "onKKeyDown",5, 2, 0, 0),
+    //new ExitState("onSpaceKeyDown",6, 2, 0, 0)
+    ], 0, undefined, 0, 0, 1),
 
 new AniNode(anima[1], 0, 0.01, anima[1][0].length, [
     new ExitState(      "onAniEnd",1,-1,-1, 0), 
     new ExitState(    "onAKeyDown",0, 2, 0,-1), 
     new ExitState(    "onDKeyDown",0, 2, 0,-1),
-    new ExitState("onSpaceKeyDown",2, 2, 0, 0),
-    new ExitState( "onCtrlKeyDown",3, 2, 0, 0),
-    new ExitState("onShiftKeyDown",4, 2, 0, 0)
-    ], 0, undefined, 1),
+    new ExitState(    "onJKeyDown",2, 2, 0, 0),
+    new ExitState(    "onLKeyDown",3, 2, 0, 0),
+    new ExitState("onShiftKeyDown",4, 2, 0, 0),
+    new ExitState(    "onKKeyDown",5, 2, 0, 0),
+    //new ExitState("onSpaceKeyDown",6, 2, 0, 0)
+    ], 0, undefined, 1, 0, 1),
     
 new AniNode(anima[2], 0, 0.05, anima[2][0].length, [
     new ExitState("onAniEnd",1,-1, 0, 0)
-    ], 0, undefined, 2),
+    ], 0, undefined, 2, 0, 1),
     
 new AniNode(anima[3], 0, 0.03, anima[3][0].length, [
     new ExitState("onAniEnd",1,-1, 0, 0)
-    ], 0, undefined, 3),
+    ], 0, undefined, 3, 0, 1),
     
 new AniNode(anima[4], 0, 0.03, anima[4][0].length, [
     new ExitState("onAniEnd",1,-1, 0, 0)
-    ], 0, undefined, 4)  
+    ], 0, undefined, 4, 0, 1),
+    
+new AniNode(anima[5], 0, 0.03, anima[5][0].length, [
+    new ExitState("onAniEnd",5,-1,-1, 0),
+    new ExitState("onKKeyUp",1,-1, 0, 0)
+    ], 0, undefined, 5, 0, 0.2),  
+    /*
+new AniNode(anima[6], 0, 0.03, anima[6][0].length, [
+    new ExitState("onAniEnd",7,-1, 0, 0.4)
+    ], 0, undefined, 6,   0, 0.4),    
+    
+new AniNode(anima[6], 0, 0.003, anima[6][0].length, [
+    new ExitState("onAniEnd",8,-1, 0, 0.6)
+    ], 0, undefined, 7, 0.4, 0.6),  
+    
+new AniNode(anima[6], 0, 0.03, anima[6][0].length, [
+    new ExitState("onAniEnd",1,-1, 0, 0)
+    ], 0, undefined, 8, 0.6,   1),  
+    */
 ];
 
 var aniEn = new AniController(aniNodes, 1, [], player);
+var enemyAniEn = new AniController(aniNodes, 1, [], enemy);
 player.aniEn = aniEn;
+enemy.aniEn = enemyAniEn;
 
 var ani=0;
 
@@ -114,7 +140,15 @@ function draw() {
     cloud3.z = -(((ani/100)+20)%40)-10;
     cloud4.z = -(((ani/100)+30)%40)-10;
     */
+    
+    player.Keys = Keys;
+    player.Keysp = Keysp;
+    
+    enemy.Keys = [];
+    enemy.Keysp = [];
+    
     player.update();
+    enemy.update();
     
     var fr = this.aniEn.getAni();
     

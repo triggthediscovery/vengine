@@ -48,7 +48,7 @@ function copy(o) {
 
 function AniController(states, start, exit, owner) {
     this.states = copy(states);
-    this.currStates = [states[start]];
+    this.currStates = [copy(states[start])];
     this.currStates[0].owner = owner;
     this.exit = exit;
     this.owner = owner;
@@ -130,16 +130,19 @@ function AniController(states, start, exit, owner) {
                 }
             }
             
-            if (cState.time>1 || cState.weight==0) {
-                if (cState.time>1) {
-                    cState.time=1;
-                    var ret = cState.getAni();
+            if (cState.time>cState.endTime || cState.weight==0) {
+                if (cState.time>cState.endTime) {
+                    cState.time=cState.endTime;
+                    var reta = cState.getAni();
                     
-                    var cx = (ret[0][0]/580)*cState.weight * (this.owner.skele.scalex/Math.abs(this.owner.skele.scalex));
+                    cState.time=cState.startTime;
+                    var retb = cState.getAni();
+                    
+                    var cx = (reta[0][0]/580)*cState.weight * (this.owner.skele.scalex/Math.abs(this.owner.skele.scalex));
                     if (Math.abs(cx)<0.15) cx = 0;
                     this.owner.x += cx;
 
-                    var cy = (ret[0][1]/580)*cState.weight * (this.owner.skele.scaley/Math.abs(this.owner.skele.scaley));
+                    var cy = (reta[0][1]/580)*cState.weight * (this.owner.skele.scaley/Math.abs(this.owner.skele.scaley));
                     if (Math.abs(cy)<0.15) cy = 0;
                     this.owner.y += cy;
                 }
