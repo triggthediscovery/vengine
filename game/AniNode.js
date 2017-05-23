@@ -117,6 +117,8 @@ function AniNode(mAni, time, speed, end, exit, wMode, owner, id, startTime, endT
             this.weight = this.weight - 0.1;
             
             if (this.weight<0) this.weight = 0;
+        } else if (this.wMode==3) {
+            this.weight = 0;
         }
     }
     

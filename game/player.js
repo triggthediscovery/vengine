@@ -66,6 +66,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         
         this.playerPt.update();
         
+        if (this.x > this.enemy.x) this.skele.scalex = -1; else this.skele.scalex = 1;
+        
         this.aniEn.update();
         
         if (this.hit) {
@@ -96,14 +98,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         
         if (eventList.getEvent("onGround",this.aniEn)) 
             this.py = undefined;
-            
         
-
-        if ((Keys[65] || Keys[68]) && !(Keys[65] && Keys[68]) && this.speed != 0) {
-             //if (Keys[65]) this.skele.scalex = -1; else this.skele.scalex = 1;
-        }
         
-        if (this.x > this.enemy.x) this.skele.scalex = -1; else this.skele.scalex = 1;
         
         this.x += 0.02*this.speed;
 

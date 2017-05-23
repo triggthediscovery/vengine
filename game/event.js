@@ -65,6 +65,8 @@ new Event(      "onGround",OnGroundEvent),
 new Event(   "aboveGround",AboveGroundEvent),
 new Event(     "onHitHigh",HitHighEvent),
 new Event(      "onHitMid",HitMidEvent),
+new Event(        "onAway",AwayEvent),
+new Event(      "onToward",TowardEvent)
 ]);
 
 /*
@@ -90,6 +92,8 @@ onGround
 aboveGround
 onHitHigh
 onHitMid
+onAway
+onToward
 */
 
 function Event(name, func) {
@@ -220,4 +224,12 @@ function HitMidEvent(obj) {
     } else {
         return false;
     }
+}
+
+function AwayEvent(obj) {
+    if ((obj.owner.Keys[65] && (obj.owner.x > obj.owner.enemy.x)) || (obj.owner.Keys[68] && (obj.owner.x < obj.owner.enemy.x))) return true; else return false;
+}
+
+function TowardEvent(obj) {
+    if ((obj.owner.Keys[65] && (obj.owner.x < obj.owner.enemy.x)) || (obj.owner.Keys[68] && (obj.owner.x > obj.owner.enemy.x))) return true; else return false;
 }

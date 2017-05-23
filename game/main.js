@@ -35,20 +35,21 @@ var scene = new Scene(lights);
 
 var aniNodes = [
 new AniNode(anima[0], 0, 0.08, anima[0][0].length, [ /*walk*/
-    new ExitState(      "onAniEnd",0,-1,-1, 0), 
-    new ExitState(      "onAKeyUp",1, 2, 0, 0), 
-    new ExitState(      "onDKeyUp",1, 2, 0, 0),
-    new ExitState(    "onJKeyDown",2, 2, 0, 0),
-    new ExitState(    "onLKeyDown",3, 2, 0, 0),
-    new ExitState("onShiftKeyDown",4, 2, 0, 0),
-    new ExitState(    "onKKeyDown",5, 2, 0, 0),
-    new ExitState("onSpaceKeyDown",6, 2, 0, 0)
+    new ExitState(      "onAniEnd", 0,-1,-1, 0), 
+    new ExitState(      "onToward",11, 3, 0, 0),
+    new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
+    new ExitState(      "onDKeyUp", 1, 2, 0, 0),
+    new ExitState(    "onJKeyDown", 2, 2, 0, 0),
+    new ExitState(    "onLKeyDown", 3, 2, 0, 0),
+    new ExitState("onShiftKeyDown", 4, 2, 0, 0),
+    new ExitState(    "onKKeyDown", 5, 2, 0, 0),
+    new ExitState("onSpaceKeyDown", 6, 2, 0, 0)
     ], 0, undefined, 0, 0, 1),
 
 new AniNode(anima[1], 0, 0.01, anima[1][0].length, [ /*stand*/
     new ExitState(      "onAniEnd", 1,-1,-1, 0), 
-    new ExitState(    "onAKeyDown", 0, 2, 0,-1), 
-    new ExitState(    "onDKeyDown",11, 2, 0,-1),
+    new ExitState(        "onAway", 0, 2, 0,-1), 
+    new ExitState(      "onToward",11, 2, 0,-1),
     new ExitState(    "onJKeyDown", 2, 2, 0, 0),
     new ExitState(    "onLKeyDown", 3, 2, 0, 0),
     new ExitState("onShiftKeyDown", 4, 2, 0, 0),
@@ -96,6 +97,7 @@ new AniNode(anima[10], 0, 0.05, anima[10][0].length, [ /*mid hit*/
     
 new AniNode(anima[0], 0,-0.08, anima[0][0].length, [ /*walkb*/
     new ExitState(      "onAniEnd",11,-1,-1, 1), 
+    new ExitState(        "onAway", 0, 3, 0, 0),
     new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
     new ExitState(      "onDKeyUp", 1, 2, 0, 0),
     new ExitState(    "onJKeyDown", 2, 2, 0, 0),
