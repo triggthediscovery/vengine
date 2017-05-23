@@ -50,6 +50,7 @@ function AniController(states, start, exit, owner) {
     this.states = copy(states);
     this.currStates = [copy(states[start])];
     this.currStates[0].owner = owner;
+    this.currStates[0].init();
     this.exit = exit;
     this.owner = owner;
     this.weight = 1;
@@ -86,37 +87,7 @@ function AniController(states, start, exit, owner) {
         return retArr;
     }
     
-    function updateNode(exit, onode, states, currStates) {
-        var found = -1;
     
-        for (var i=0; i<currStates.length; i++) {
-            if (currStates[i].id == states[exit.nextAni].id) found = i;
-        }
-    
-        if (found==-1) {
-            currStates.push(copy(states[exit.nextAni]));
-                        
-            currStates[currStates.length-1].weight = onode.weight;
-            currStates[currStates.length-1].owner = onode.owner;
-            if (exit.nextMode != -1) 
-                onode.wMode = exit.nextMode;
-            if (exit.nextAniMode != -1) 
-                currStates[currStates.length-1].wMode = exit.nextAniMode;
-            else
-                currStates[currStates.length-1].wMode = onode.wMode;
-            if (exit.enterTime != -1) currStates[currStates.length-1].time = exit.enterTime;
-        } else {
-            currStates[found].weight = onode.weight;
-            currStates[found].owner = onode.owner;
-            if (exit.nextMode != -1) 
-                onode.wMode = exit.nextMode;
-            if (exit.nextAniMode != -1) 
-                currStates[found].wMode = exit.nextAniMode;
-            else
-                currStates[found].wMode = onode.wMode;
-            if (exit.enterTime != -1) currStates[found].time = exit.enterTime;
-        }
-    }
     
     function update() {
         for (var i=0; i<this.currStates.length; i++) {
@@ -126,12 +97,13 @@ function AniController(states, start, exit, owner) {
             
             for (var j=0; j<cState.exit.length; j++) {
                 if (eventList.getEvent(cState.exit[j].id, cState) && cState.weight==1) {
-                    updateNode(cState.exit[j], cState, this.states, this.currStates);
+                    cState.exit[j].trigger();
                 }
             }
             
-            if (cState.time>cState.endTime || cState.weight==0) {
-                if (cState.time>cState.endTime) {
+            if (eventList.getEvent("onAniEnd", cState) || cState.weight==0) {
+                if (eventList.getEvent("onAniEnd", cState)) {
+                    
                     cState.time=cState.endTime;
                     var reta = cState.getAni();
                     
@@ -139,12 +111,11 @@ function AniController(states, start, exit, owner) {
                     var retb = cState.getAni();
                     
                     var cx = (reta[0][0]/580)*cState.weight * (this.owner.skele.scalex/Math.abs(this.owner.skele.scalex));
-                    if (Math.abs(cx)<0.15) cx = 0;
                     this.owner.x += cx;
 
                     var cy = (reta[0][1]/580)*cState.weight * (this.owner.skele.scaley/Math.abs(this.owner.skele.scaley));
-                    if (Math.abs(cy)<0.15) cy = 0;
                     this.owner.y += cy;
+                    
                 }
                 
                 this.currStates.splice(i,1);

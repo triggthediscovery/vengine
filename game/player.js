@@ -13,6 +13,11 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.sy;
     this.playerPt = new Point3(this.x,this.y,this.z);
     this.aniEn = aniEn;
+    this.py = undefined;
+    this.enemy = undefined;
+    this.iframes = -1;
+    this.hit = false;
+    this.lastOff = [0,0,0];
     
     this.Keys = [];
     this.Keysp = [];
@@ -44,32 +49,64 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
             this.pts[i].initalize();
         }
     }
+    
+    //pt99 is sword tip
 
     function update() {
-        this.aniEn.update();
-
-        this.speed = 0;
-        
-        for (var i=0; i<this.aniEn.currStates.length; i++) {
-            if (this.aniEn.currStates[i].id == 0) {
-                this.speed = this.aniEn.currStates[i].weight * (this.skele.scalex/Math.abs(this.skele.scalex));
-            } if (this.aniEn.currStates[i].id == 1 && this.speed == 0) {
-                //this.speed = 0.001;
-            }
+        if (this.py != undefined) {
+            this.y += 0.02*this.py;
+            this.py += 0.1;
         }
         
-        if ((Keys[65] || Keys[68]) && !(Keys[65] && Keys[68]) && this.speed != 0) {
-             if (Keys[65]) this.skele.scalex = -1; else this.skele.scalex = 1;
-        }
+        this.iframes--;
         
-        this.x += 0.02*this.speed;
-
         this.playerPt.x = this.x;
         this.playerPt.y = this.y;
         this.playerPt.z = this.z;
         
         this.playerPt.update();
-    
+        
+        this.aniEn.update();
+        
+        if (this.hit) {
+            this.iframes = 30;
+        }
+
+        this.speed = 0;
+        
+        var find = false;
+        
+        for (var i=0; i<this.aniEn.currStates.length; i++) {
+            if (this.aniEn.currStates[i].id == 0 || this.aniEn.currStates[i].id == 11) {
+                this.speed = this.aniEn.currStates[i].weight * (this.skele.scalex/Math.abs(this.skele.scalex)) * this.aniEn.currStates[i].speed * 12;
+            } else if (this.aniEn.currStates[i].id == 1 && this.speed == 0) {
+                //this.speed = 0.001;
+            } else if ((this.aniEn.currStates[i].id == 7) && this.speed == 0 && this.aniEn.currStates[i].wMode == 0) {
+                this.speed = 1 * (this.skele.scalex/Math.abs(this.skele.scalex));
+                
+                find = true;
+                
+                if (this.py == undefined) {
+                    this.py = -1.5;
+                }
+            } else if (this.aniEn.currStates[i].id == 6 || this.aniEn.currStates[i].id == 7 || this.aniEn.currStates[i].id == 8) {
+                find = true;
+            }
+        }
+        
+        if (eventList.getEvent("onGround",this.aniEn)) 
+            this.py = undefined;
+            
+        
+
+        if ((Keys[65] || Keys[68]) && !(Keys[65] && Keys[68]) && this.speed != 0) {
+             //if (Keys[65]) this.skele.scalex = -1; else this.skele.scalex = 1;
+        }
+        
+        if (this.x > this.enemy.x) this.skele.scalex = -1; else this.skele.scalex = 1;
+        
+        this.x += 0.02*this.speed;
+
         var dx = (this.x+scrollx)*1500;
         var dy = (this.y-0.2+scrolly)*1500;
         var dz = ((5*scale)-this.z)*1000;
@@ -86,12 +123,24 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         var posArr = fr[0];
         var barr = fr[1];
         
-        this.skele.x2 = posArr[0]*this.skele.scalex/2;
-        this.skele.y2 = posArr[1]*this.skele.scaley/2;
+        var cx = ((posArr[0]-this.lastOff[0])/320)*this.skele.scalex/2;
+        var cy = ((posArr[1]-this.lastOff[1])/320)*this.skele.scaley/2;
+        
+        this.x += cx;
+        this.y += cy;
+        
+        this.lastOff = fr[0];
+        
+        this.skele.x2 = 0;//posArr[0]*this.skele.scalex/2;
+        this.skele.y2 = 0;//posArr[1]*this.skele.scaley/2;
         this.skele.rot = posArr[2];
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
         this.skele.scaley = mscale;
+        
+        if (Math.round(this.iframes/2)%5>3 && this.iframes>0) {
+            this.skele.x2+=1000;
+        }
         
         this.skele.scalex = mscale * (this.skele.scalex/Math.abs(this.skele.scalex));
 
@@ -108,6 +157,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         }
 
         this.skele.update();
+        
+        this.hit = false;
     }
     
     function draw() {

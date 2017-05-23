@@ -213,6 +213,12 @@ function Input() {
 	        skele.speed *= 1.2;
 	    }
 	    
+	    if (SixKey && !SixKeyp) {
+	        skele.poss[skele.frame][0] = undefined;
+	        skele.poss[skele.frame][1] = undefined;
+	        skele.poss[skele.frame][2] = undefined;
+	    }
+	    
 	    if (CKey && !CKeyp) {
 	        frameSel = Math.round(skele.frame);
 	    }

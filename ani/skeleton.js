@@ -91,8 +91,8 @@ function Skeleton(x, y, scalex, scaley, rot, poss, frames) {
     function update() {
         var posArr = findBlend(this.poss,this.frame,3);
         
-        this.x2 = posArr[0]+this.x;
-        this.y2 = posArr[1]+this.y;
+        this.x2 = (posArr[0]*this.scalex/2)+this.x;
+        this.y2 = (posArr[1]*this.scaley/2)+this.y;
         this.rot = posArr[2];
         this.rotu = posArr[2];
         this.roti = posArr[2];

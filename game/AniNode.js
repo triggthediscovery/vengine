@@ -79,7 +79,7 @@ Exit state ids:
 function AniNode(mAni, time, speed, end, exit, wMode, owner, id, startTime, endTime) {
     this.frames = mAni[1];
     this.poss = mAni[0];
-    this.time = startTime;
+    this.time = time;
     this.speed = speed;
     this.length = mAni[0].length;
     this.end = end;
@@ -90,6 +90,12 @@ function AniNode(mAni, time, speed, end, exit, wMode, owner, id, startTime, endT
     this.id = id;
     this.startTime = startTime;
     this.endTime = endTime;
+    
+    function init() {
+        for (var i=0; i<exit.length; i++) {
+            this.exit[i].parent = this;
+        }
+    }
 
     function getAni() {
         var posArr = findBlend(this.poss, this.time*(this.length-1), 3, this.owner.bns);
@@ -116,4 +122,5 @@ function AniNode(mAni, time, speed, end, exit, wMode, owner, id, startTime, endT
     
     this.getAni = getAni;
     this.update = update;
+    this.init = init;
 }

@@ -1,3 +1,17 @@
+function drawPt(x, y) {
+    context.fillStyle = "green";
+    context.beginPath();
+
+    context.moveTo(x+2,y);
+    context.lineTo(x,y+2);
+    context.lineTo(x-2,y);
+    context.lineTo(x,y-2);
+    context.lineTo(x+2,y);
+
+    context.closePath();
+    context.fill();
+}
+
 /*
 the event system is going to be a little wierd, but stick with me
 
@@ -30,23 +44,27 @@ function Events(events) {
 }
 
 var eventList = new Events([
-new AKeyDownEvent(),
-new AKeyUpEvent(),
-new DKeyDownEvent(),
-new DKeyUpEvent(),
-new JKeyDownEvent(),
-new JKeyUpEvent(),
-new KKeyDownEvent(),
-new KKeyUpEvent(),
-new LKeyDownEvent(),
-new LKeyUpEvent(),
-new SpaceKeyDownEvent(),
-new SpaceKeyUpEvent(),
-new CtrlKeyDownEvent(),
-new CtrlKeyUpEvent(),
-new ShiftKeyDownEvent(),
-new ShiftKeyUpEvent(),
-new AniEndEvent()
+new Event(    "onAKeyDown",AKeyDownEvent),
+new Event(      "onAKeyUp",AKeyUpEvent),
+new Event(    "onDKeyDown",DKeyDownEvent),
+new Event(      "onDKeyUp",DKeyUpEvent),
+new Event(    "onJKeyDown",JKeyDownEvent),
+new Event(      "onJKeyUp",JKeyUpEvent),
+new Event(    "onKKeyDown",KKeyDownEvent),
+new Event(      "onKKeyUp",KKeyUpEvent),
+new Event(    "onLKeyDown",LKeyDownEvent),
+new Event(      "onLKeyUp",LKeyUpEvent),
+new Event("onSpaceKeyDown",SpaceKeyDownEvent),
+new Event(  "onSpaceKeyUp",SpaceKeyUpEvent),
+new Event( "onCtrlKeyDown",CtrlKeyDownEvent),
+new Event(   "onCtrlKeyUp",CtrlKeyUpEvent),
+new Event("onShiftKeyDown",ShiftKeyDownEvent),
+new Event(  "onShiftKeyUp",ShiftKeyUpEvent),
+new Event(      "onAniEnd",AniEndEvent),
+new Event(      "onGround",OnGroundEvent),
+new Event(   "aboveGround",AboveGroundEvent),
+new Event(     "onHitHigh",HitHighEvent),
+new Event(      "onHitMid",HitMidEvent),
 ]);
 
 /*
@@ -68,176 +86,138 @@ onCtrlKeyUp
 onShiftKeyDown
 onShiftKeyUp
 onAniEnd
+onGround
+aboveGround
+onHitHigh
+onHitMid
 */
 
-function AKeyDownEvent() {
-    this.name = "onAKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[65]) return true; else return false;
-    }
-    
-    this.update = update;
+function Event(name, func) {
+    this.name = name;
+    this.update = func;
 }
 
-function AKeyUpEvent() {
-    this.name = "onAKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[65] && obj.owner.Keysp[65]) return true; else return false;
-    }
-    
-    this.update = update;
+function AKeyDownEvent(obj) {
+    if (obj.owner.Keys[65]) return true; else return false;
 }
 
-function DKeyDownEvent() {
-    this.name = "onDKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[68]) return true; else return false;
-    }
-    
-    this.update = update;
+function AKeyUpEvent(obj) {
+    if (!obj.owner.Keys[65] && obj.owner.Keysp[65]) return true; else return false;
 }
 
-function DKeyUpEvent() {
-    this.name = "onDKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[68] && obj.owner.Keysp[68]) return true; else return false;
-    }
-    
-    this.update = update;
+function DKeyDownEvent(obj) {
+    if (obj.owner.Keys[68]) return true; else return false;
 }
 
-///////
-
-function JKeyDownEvent() {
-    this.name = "onJKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[74]) return true; else return false;
-    }
-    
-    this.update = update;
+function DKeyUpEvent(obj) {
+    if (!obj.owner.Keys[68] && obj.owner.Keysp[68]) return true; else return false;
 }
 
-function JKeyUpEvent() {
-    this.name = "onJKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[74] && obj.owner.Keysp[74]) return true; else return false;
-    }
-    
-    this.update = update;
+function JKeyDownEvent(obj) {
+    if (obj.owner.Keys[74]) return true; else return false;
 }
 
-function KKeyDownEvent() {
-    this.name = "onKKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[75]) return true; else return false;
-    }
-    
-    this.update = update;
+function JKeyUpEvent(obj) {
+    if (!obj.owner.Keys[74] && obj.owner.Keysp[74]) return true; else return false;
 }
 
-function KKeyUpEvent() {
-    this.name = "onKKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[75] && obj.owner.Keysp[75]) return true; else return false;
-    }
-    
-    this.update = update;
+function KKeyDownEvent(obj) {
+    if (obj.owner.Keys[75]) return true; else return false;
 }
 
-function LKeyDownEvent() {
-    this.name = "onLKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[76]) return true; else return false;
-    }
-    
-    this.update = update;
+function KKeyUpEvent(obj) {
+    if (!obj.owner.Keys[75] && obj.owner.Keysp[75]) return true; else return false;
 }
 
-function LKeyUpEvent() {
-    this.name = "onLKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[76] && obj.owner.Keysp[76]) return true; else return false;
-    }
-    
-    this.update = update;
+function LKeyDownEvent(obj) {
+    if (obj.owner.Keys[76]) return true; else return false;
 }
 
-function SpaceKeyDownEvent() {
-    this.name = "onSpaceKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[32] && !obj.owner.Keysp[32]) return true; else return false;
-    }
-    
-    this.update = update;
+function LKeyUpEvent(obj) {
+    if (!obj.owner.Keys[76] && obj.owner.Keysp[76]) return true; else return false;
 }
 
-function SpaceKeyUpEvent() {
-    this.name = "onSpaceKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[32]) return true; else return false;
-    }
-    
-    this.update = update;
+function SpaceKeyDownEvent(obj) {
+    if (obj.owner.Keys[32] && !obj.owner.Keysp[32]) return true; else return false;
 }
 
-function CtrlKeyDownEvent() {
-    this.name = "onCtrlKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[17] && !obj.owner.Keysp[17]) return true; else return false;
-    }
-    
-    this.update = update;
+function SpaceKeyUpEvent(obj) {
+    if (!obj.owner.Keys[32]) return true; else return false;
 }
 
-function CtrlKeyUpEvent() {
-    this.name = "onCtrlKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[17]) return true; else return false;
-    }
-    
-    this.update = update;
+function CtrlKeyDownEvent(obj) {
+    if (obj.owner.Keys[17] && !obj.owner.Keysp[17]) return true; else return false;
 }
 
-function ShiftKeyDownEvent() {
-    this.name = "onShiftKeyDown";
-    
-    function update(obj) {
-        if (obj.owner.Keys[16] && !obj.owner.Keysp[16]) return true; else return false;
-    }
-    
-    this.update = update;
+function CtrlKeyUpEvent(obj) {
+    if (!obj.owner.Keys[17]) return true; else return false;
 }
 
-function ShiftKeyUpEvent() {
-    this.name = "onShiftKeyUp";
-    
-    function update(obj) {
-        if (!obj.owner.Keys[16]) return true; else return false;
-    }
-    
-    this.update = update;
+function ShiftKeyDownEvent(obj) {
+    if (obj.owner.Keys[16] && !obj.owner.Keysp[16]) return true; else return false;
 }
 
-function AniEndEvent() {
-    this.name = "onAniEnd";
+function ShiftKeyUpEvent(obj) {
+    if (!obj.owner.Keys[16]) return true; else return false;
+}
+
+function AniEndEvent(obj) {
+    if (obj.time>obj.endTime || obj.time<obj.startTime) return true; else return false;
+}
+
+function OnGroundEvent(obj) {
+    if (obj.owner.y>-0.35) return true; else return false;
+}
+
+function AboveGroundEvent(obj) {
+    if (obj.owner.y>-0.7 && obj.owner.py>0) return true; else return false;
+}
+
+function HitHighEvent(obj) {
+    var hitx = obj.owner.enemy.pts[99].x1 + obj.owner.enemy.sx;
+    var hity = obj.owner.enemy.pts[99].y1 + obj.owner.enemy.sy; 
+    var sx = obj.owner.sx;
+    var sy = obj.owner.sy+60; 
     
-    function update(obj) {
-        if (obj.time>obj.endTime) return true; else return false;
+    //drawPt(hitx, hity);
+    //drawPt(sx, sy);
+    
+    var aEn = obj.owner.enemy.aniEn;
+    var found = false;
+    
+    for (var i=0; i<aEn.currStates.length; i++) {
+        if (aEn.currStates[i].id == 2) {
+            found = true
+        }
     }
+
+    if (Math.abs(hitx-sx)<40 && Math.abs(hity-sy)<80 && found && obj.owner.iframes<0) {
+        obj.owner.hit=true;
+        return true; 
+    } else {
+        return false;
+    }
+}
+
+function HitMidEvent(obj) {
+    var hitx = obj.owner.enemy.pts[99].x1 + obj.owner.enemy.sx;
+    var hity = obj.owner.enemy.pts[99].y1 + obj.owner.enemy.sy; 
+    var sx = obj.owner.sx;
+    var sy = obj.owner.sy+60; 
+
+    var aEn = obj.owner.enemy.aniEn;
+    var found = false;
     
-    this.update = update;
+    for (var i=0; i<aEn.currStates.length; i++) {
+        if (aEn.currStates[i].id == 3) {
+            found = true
+        }
+    }
+
+    if (Math.abs(hitx-sx)<40 && Math.abs(hity-sy)<80 && found && obj.owner.iframes<0) {
+        obj.owner.hit=true;
+        return true; 
+    } else {
+        return false;
+    }
 }

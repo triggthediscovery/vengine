@@ -151,7 +151,7 @@ function draw() {
     }
     
     context.fillText(str,20,20);
-    context.fillText(skele.frame,20,40);
+    context.fillText(pointSel,20,40);
 
 	writeOut();
 	

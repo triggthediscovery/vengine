@@ -7,6 +7,8 @@ function compare(a, b) {
 
 var player = new Player(0,-0.35,0.5,bones,points,polys,anima,undefined);
 var enemy  = new Player(0.5,-0.35,0.5,bones,points,polys,anima,undefined);
+player.enemy = enemy;
+enemy.enemy = player;
 var background = new Model(0,0,0,Verts,Polys,1);
 var sun = new Model(0,-0.5,1,sunVerts,sunPolys,0.2);
 /*
@@ -32,7 +34,7 @@ var lights = [new Light(0.35, -0.75, -0.5, 1, 0.2, 0, 3), new Light(-0.35, -0.75
 var scene = new Scene(lights);
 
 var aniNodes = [
-new AniNode(anima[0], 0, 0.08, anima[0][0].length, [
+new AniNode(anima[0], 0, 0.08, anima[0][0].length, [ /*walk*/
     new ExitState(      "onAniEnd",0,-1,-1, 0), 
     new ExitState(      "onAKeyUp",1, 2, 0, 0), 
     new ExitState(      "onDKeyUp",1, 2, 0, 0),
@@ -40,49 +42,68 @@ new AniNode(anima[0], 0, 0.08, anima[0][0].length, [
     new ExitState(    "onLKeyDown",3, 2, 0, 0),
     new ExitState("onShiftKeyDown",4, 2, 0, 0),
     new ExitState(    "onKKeyDown",5, 2, 0, 0),
-    //new ExitState("onSpaceKeyDown",6, 2, 0, 0)
+    new ExitState("onSpaceKeyDown",6, 2, 0, 0)
     ], 0, undefined, 0, 0, 1),
 
-new AniNode(anima[1], 0, 0.01, anima[1][0].length, [
-    new ExitState(      "onAniEnd",1,-1,-1, 0), 
-    new ExitState(    "onAKeyDown",0, 2, 0,-1), 
-    new ExitState(    "onDKeyDown",0, 2, 0,-1),
-    new ExitState(    "onJKeyDown",2, 2, 0, 0),
-    new ExitState(    "onLKeyDown",3, 2, 0, 0),
-    new ExitState("onShiftKeyDown",4, 2, 0, 0),
-    new ExitState(    "onKKeyDown",5, 2, 0, 0),
-    //new ExitState("onSpaceKeyDown",6, 2, 0, 0)
+new AniNode(anima[1], 0, 0.01, anima[1][0].length, [ /*stand*/
+    new ExitState(      "onAniEnd", 1,-1,-1, 0), 
+    new ExitState(    "onAKeyDown", 0, 2, 0,-1), 
+    new ExitState(    "onDKeyDown",11, 2, 0,-1),
+    new ExitState(    "onJKeyDown", 2, 2, 0, 0),
+    new ExitState(    "onLKeyDown", 3, 2, 0, 0),
+    new ExitState("onShiftKeyDown", 4, 2, 0, 0),
+    new ExitState(    "onKKeyDown", 5, 2, 0, 0),
+    new ExitState("onSpaceKeyDown", 6, 2, 0, 0),
+    new ExitState(     "onHitHigh", 9,-1, 1, 0),
+    new ExitState(      "onHitMid",10,-1, 1, 0)
     ], 0, undefined, 1, 0, 1),
     
-new AniNode(anima[2], 0, 0.05, anima[2][0].length, [
+new AniNode(anima[2], 0, 0.05, anima[2][0].length, [ /*swing*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 2, 0, 1),
     
-new AniNode(anima[3], 0, 0.03, anima[3][0].length, [
+new AniNode(anima[3], 0, 0.03, anima[3][0].length, [ /*jab*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 3, 0, 1),
     
-new AniNode(anima[4], 0, 0.03, anima[4][0].length, [
+new AniNode(anima[4], 0, 0.03, anima[4][0].length, [ /*roll*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 4, 0, 1),
     
-new AniNode(anima[5], 0, 0.03, anima[5][0].length, [
+new AniNode(anima[5], 0, 0.03, anima[5][0].length, [ /*block*/
     new ExitState("onAniEnd",5,-1,-1, 0),
     new ExitState("onKKeyUp",1,-1, 0, 0)
     ], 0, undefined, 5, 0, 0.2),  
-    /*
-new AniNode(anima[6], 0, 0.03, anima[6][0].length, [
-    new ExitState("onAniEnd",7,-1, 0, 0.4)
-    ], 0, undefined, 6,   0, 0.4),    
     
-new AniNode(anima[6], 0, 0.003, anima[6][0].length, [
-    new ExitState("onAniEnd",8,-1, 0, 0.6)
-    ], 0, undefined, 7, 0.4, 0.6),  
+new AniNode(anima[6], 0, 0.08, anima[6][0].length, [ /*jump a*/
+    new ExitState("onAniEnd",7,-1, 0, 0)
+    ], 0, undefined, 6, 0, 1),    
     
-new AniNode(anima[6], 0, 0.03, anima[6][0].length, [
-    new ExitState("onAniEnd",1,-1, 0, 0)
-    ], 0, undefined, 8, 0.6,   1),  
-    */
+new AniNode(anima[7], 0, 0.05, anima[7][0].length, [ /*jump b*/
+    new ExitState("onAniEnd",7,-1,-1, 0),
+    new ExitState("aboveGround",8, 2, 0, 0)
+    ], 0, undefined, 7, 0, 1),  
+    
+new AniNode(anima[8], 0, 0.05, anima[8][0].length, [ /*jump c*/
+    new ExitState("onAniEnd",1,-1, 0, 0),
+    ], 0, undefined, 8, 0, 1),  
+    
+new AniNode(anima[9], 0, 0.05, anima[9][0].length, [ /*high hit*/
+    ], 0, undefined, 9, 0, 1),
+    
+new AniNode(anima[10], 0, 0.05, anima[10][0].length, [ /*mid hit*/
+    ], 0, undefined,10, 0, 1),
+    
+new AniNode(anima[0], 0,-0.08, anima[0][0].length, [ /*walkb*/
+    new ExitState(      "onAniEnd",11,-1,-1, 1), 
+    new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
+    new ExitState(      "onDKeyUp", 1, 2, 0, 0),
+    new ExitState(    "onJKeyDown", 2, 2, 0, 0),
+    new ExitState(    "onLKeyDown", 3, 2, 0, 0),
+    new ExitState("onShiftKeyDown", 4, 2, 0, 0),
+    new ExitState(    "onKKeyDown", 5, 2, 0, 0),
+    new ExitState("onSpaceKeyDown", 6, 2, 0, 0)
+    ], 0, undefined,11, 0, 1),
 ];
 
 var aniEn = new AniController(aniNodes, 1, [], player);
@@ -178,6 +199,8 @@ function draw() {
     for (var i=0; i<drawArr.length; i++) {
         drawArr[i].draw();
     }
+    
+    //eventList.getEvent("onHitHigh",enemy.aniEn);
 
     context.fillStyle = 'black';
 
