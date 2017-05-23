@@ -158,7 +158,20 @@ function CtrlKeyUpEvent(obj) {
 }
 
 function ShiftKeyDownEvent(obj) {
-    if (obj.owner.Keys[16] && !obj.owner.Keysp[16]) return true; else return false;
+    if (obj.owner.Keys[16] && !obj.owner.Keysp[16]) {
+        if (obj.owner.Keys[65]) 
+            obj.owner.skele.scalex =-Math.abs(obj.owner.skele.scalex);
+        if (obj.owner.Keys[68]) 
+            obj.owner.skele.scalex = Math.abs(obj.owner.skele.scalex);
+            
+        obj.owner.Keys[16] = true;
+            
+        obj.owner.turn = false;    
+    
+        return true; 
+    } else {
+        return false;
+    }
 }
 
 function ShiftKeyUpEvent(obj) {

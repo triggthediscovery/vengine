@@ -90,15 +90,22 @@ function AniController(states, start, exit, owner) {
     
     
     function update() {
-        for (var i=0; i<this.currStates.length; i++) {
+        var len = this.currStates.length;
+    
+        for (var i=0; i<len; i++) {
             var cState = this.currStates[i]; 
         
             cState.update(true);
             
             for (var j=0; j<cState.exit.length; j++) {
-                if (eventList.getEvent(cState.exit[j].id, cState) && cState.weight==1) {
+                if (eventList.getEvent(cState.exit[j].id, cState) && (cState.weight!=0)) {
                     cState.exit[j].trigger();
+                    cState.update(false);
                 }
+            }
+            
+            if (this.currStates.length == 3) {
+                var why = 0;
             }
             
             if (eventList.getEvent("onAniEnd", cState) || cState.weight==0) {
@@ -120,7 +127,8 @@ function AniController(states, start, exit, owner) {
                 
                 this.currStates.splice(i,1);
                 
-                j--;
+                len--;
+                i--;
             }
         }
     } 

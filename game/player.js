@@ -18,6 +18,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.iframes = -1;
     this.hit = false;
     this.lastOff = [0,0,0];
+    this.turn = false;
     
     this.Keys = [];
     this.Keysp = [];
@@ -66,9 +67,16 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         
         this.playerPt.update();
         
-        if (this.x > this.enemy.x) this.skele.scalex = -1; else this.skele.scalex = 1;
-        
         this.aniEn.update();
+        
+        if (this.turn) {
+            if (this.x > this.enemy.x) 
+                this.skele.scalex = -Math.abs(this.skele.scalex); 
+            else 
+                this.skele.scalex = Math.abs(this.skele.scalex);
+        }
+        
+        
         
         if (this.hit) {
             this.iframes = 30;
@@ -77,12 +85,14 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         this.speed = 0;
         
         var find = false;
+        this.turn=false;
         
         for (var i=0; i<this.aniEn.currStates.length; i++) {
             if (this.aniEn.currStates[i].id == 0 || this.aniEn.currStates[i].id == 11) {
                 this.speed = this.aniEn.currStates[i].weight * (this.skele.scalex/Math.abs(this.skele.scalex)) * this.aniEn.currStates[i].speed * 12;
+                this.turn = true;
             } else if (this.aniEn.currStates[i].id == 1 && this.speed == 0) {
-                //this.speed = 0.001;
+                this.turn = true;
             } else if ((this.aniEn.currStates[i].id == 7) && this.speed == 0 && this.aniEn.currStates[i].wMode == 0) {
                 this.speed = 1 * (this.skele.scalex/Math.abs(this.skele.scalex));
                 
@@ -98,9 +108,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         
         if (eventList.getEvent("onGround",this.aniEn)) 
             this.py = undefined;
-        
-        
-        
+
         this.x += 0.02*this.speed;
 
         var dx = (this.x+scrollx)*1500;
