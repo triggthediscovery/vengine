@@ -5,8 +5,8 @@ function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-var player = new Player(0,-0.35,0.5,bones,points,polys,anima,undefined);
-var enemy  = new Player(0.5,-0.35,0.5,bones,points,polys,anima,undefined);
+var player = new Player(0,-0.35,0.5,bones,points,ppolys,anima,undefined);
+var enemy  = new Player(0.5,-0.35,0.5,bones,points,epolys,anima,undefined);
 player.enemy = enemy;
 enemy.enemy = player;
 var background = new Model(0,0,0,Verts,Polys,1);
@@ -34,14 +34,14 @@ var lights = [new Light(0.35, -0.75, -0.5, 1, 0.2, 0, 3), new Light(-0.35, -0.75
 var scene = new Scene(lights);
 
 var aniNodes = [
-new AniNode(anima[0], 0, 0.08, anima[0][0].length, [ /*walk*/
+new AniNode(anima[0], 0, 0.06, anima[0][0].length, [ /*walk*/
     new ExitState("onShiftKeyDown", 4, 3, 0, 0),
     new ExitState(      "onAniEnd", 0,-1,-1, 0), 
     new ExitState(      "onToward",11, 3, 0, 0),
     new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
     new ExitState(      "onDKeyUp", 1, 2, 0, 0),
-    new ExitState(    "onJKeyDown", 2, 2, 0, 0),
-    new ExitState(    "onLKeyDown", 3, 2, 0, 0),
+    new ExitState(    "onJKeyDown", 2, 3, 0, 0),
+    new ExitState(    "onLKeyDown", 3, 3, 0, 0),
     new ExitState(    "onKKeyDown", 5, 2, 0, 0),
     new ExitState("onSpaceKeyDown", 6, 2, 0, 0)
     ], 0, undefined, 0, 0, 1),
@@ -51,8 +51,8 @@ new AniNode(anima[1], 0, 0.01, anima[1][0].length, [ /*stand*/
     new ExitState(      "onAniEnd", 1,-1,-1, 0), 
     new ExitState(        "onAway", 0, 2, 0,-1), 
     new ExitState(      "onToward",11, 2, 0,-1),
-    new ExitState(    "onJKeyDown", 2, 2, 0, 0),
-    new ExitState(    "onLKeyDown", 3, 2, 0, 0),
+    new ExitState(    "onJKeyDown", 2, 3, 0, 0),
+    new ExitState(    "onLKeyDown", 3, 3, 0, 0),
     new ExitState(    "onKKeyDown", 5, 2, 0, 0),
     new ExitState("onSpaceKeyDown", 6, 2, 0, 0),
     new ExitState(     "onHitHigh", 9,-1, 1, 0),
@@ -63,11 +63,11 @@ new AniNode(anima[2], 0, 0.05, anima[2][0].length, [ /*swing*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 2, 0, 1),
     
-new AniNode(anima[3], 0, 0.03, anima[3][0].length, [ /*jab*/
+new AniNode(anima[3], 0,0.025, anima[3][0].length, [ /*jab*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 3, 0, 1),
     
-new AniNode(anima[4], 0, 0.03, anima[4][0].length, [ /*roll*/
+new AniNode(anima[4], 0,0.025, anima[4][0].length, [ /*roll*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 4, 0, 1),
     
@@ -95,14 +95,14 @@ new AniNode(anima[9], 0, 0.05, anima[9][0].length, [ /*high hit*/
 new AniNode(anima[10], 0, 0.05, anima[10][0].length, [ /*mid hit*/
     ], 0, undefined,10, 0, 1),
     
-new AniNode(anima[0], 0,-0.08, anima[0][0].length, [ /*walkb*/
+new AniNode(anima[0], 0,-0.06, anima[0][0].length, [ /*walkb*/
     new ExitState("onShiftKeyDown", 4, 3, 0, 0),
     new ExitState(      "onAniEnd",11,-1,-1, 1), 
     new ExitState(        "onAway", 0, 3, 0, 0),
     new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
     new ExitState(      "onDKeyUp", 1, 2, 0, 0),
-    new ExitState(    "onJKeyDown", 2, 2, 0, 0),
-    new ExitState(    "onLKeyDown", 3, 2, 0, 0),
+    new ExitState(    "onJKeyDown", 2, 3, 0, 0),
+    new ExitState(    "onLKeyDown", 3, 3, 0, 0),
     new ExitState(    "onKKeyDown", 5, 2, 0, 0),
     new ExitState("onSpaceKeyDown", 6, 2, 0, 0)
     ], 0, undefined,11, 0, 1),
@@ -112,6 +112,8 @@ var aniEn = new AniController(aniNodes, 1, [], player);
 var enemyAniEn = new AniController(aniNodes, 1, [], enemy);
 player.aniEn = aniEn;
 enemy.aniEn = enemyAniEn;
+
+var auto = new AI(enemy, player);
 
 var ani=0;
 
@@ -124,6 +126,9 @@ function draw() {
     
     //if (WKey) player.z+=0.05;
     //if (SKey) player.z-=0.05;
+    
+    //if (player.Keys[87]) scale += 0.01;
+    //if (player.Keys[83]) scale -= 0.01;
     
     ani+=0.5;
     
@@ -167,35 +172,33 @@ function draw() {
     player.Keys = Keys;
     player.Keysp = Keysp;
     
-    enemy.Keys = [];
-    enemy.Keysp = [];
-    
-    player.update();
-    enemy.update();
+    auto.update();
     
     var fr = this.aniEn.getAni();
     
     var cx = fr[0][0]*player.skele.scalex/2;
 
-    while (player.playerPt.sx+cx<200) {
-        scrollx+=0.01;
+    scrollx = (player.playerPt.x + enemy.playerPt.x) / -2;
+    scrolly = ((player.playerPt.y + enemy.playerPt.y) / -2) + (0.05);
+    
+    scale = 0.8;
+    
+    player.playerPt.update();
+    enemy.playerPt.update();
+    
+    while (Math.abs(player.playerPt.sx-enemy.playerPt.sx)>600) {
+        scale+=0.01;
+
         player.playerPt.update();
+        enemy.playerPt.update();
     }
     
-    while (player.playerPt.sx+cx>600) {
-        scrollx-=0.01;
-        player.playerPt.update();
-    }
+    player.update();
+    enemy.update();
     
     background.update();
     sun.update();
-    
-    /*
-    cloud1.update();
-    cloud2.update();
-    cloud3.update();
-    cloud4.update();
-    */
+
     drawArr.sort(compare);
 
     for (var i=0; i<drawArr.length; i++) {

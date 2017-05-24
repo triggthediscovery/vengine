@@ -13,6 +13,7 @@ function Skeleton(x, y, scalex, scaley, rot) {
     this.frame = 0;
     this.speed = 0.9;
     this.lit = -1;
+    this.maxy = 0;
 
     function update() {
         for (var i = 0; i < this.frames.length; i++) {
@@ -21,8 +22,12 @@ function Skeleton(x, y, scalex, scaley, rot) {
             this.bones[i].update();
         }
         
+        this.maxy = 0;
+        
         for (var i = 0; i < this.points.length; i++) {
             this.points[i].update();
+            
+            if (this.points[i].y1>this.maxy) this.maxy = this.points[i].y1; 
         }
     }
     

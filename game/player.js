@@ -130,8 +130,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         var cx = ((posArr[0]-this.lastOff[0])/320)*this.skele.scalex/2;
         var cy = ((posArr[1]-this.lastOff[1])/320)*this.skele.scaley/2;
         
-        this.x += cx;
-        this.y += cy;
+        this.x += cx*scale;
+        this.y += cy*scale;
         
         this.lastOff = fr[0];
         
@@ -161,6 +161,9 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         }
 
         this.skele.update();
+        
+        if (this.skele.maxy+this.sy>450) 
+            this.y = -0.35;
         
         this.hit = false;
     }
