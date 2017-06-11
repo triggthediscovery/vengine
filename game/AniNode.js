@@ -90,6 +90,9 @@ function AniNode(mAni, time, speed, end, exit, wMode, owner, id, startTime, endT
     this.id = id;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.lastOff = [0,0,0];
+    this.lastTime = 0;
+    this.lastRet = [0,0,0];
     
     function init() {
         for (var i=0; i<exit.length; i++) {
@@ -101,7 +104,17 @@ function AniNode(mAni, time, speed, end, exit, wMode, owner, id, startTime, endT
         var posArr = findBlend(this.poss, this.time*(this.length-1), 3, this.owner.bns);
         var rotArr = findBlend2(this.frames, this.time*(this.length-1), this.owner.bns.length, 2, this.owner.bns);
         
-        return [posArr,rotArr];
+        var retPos = [(posArr[0]-this.lastOff[0]),(posArr[1]-this.lastOff[1]),(posArr[2]-this.lastOff[2])];
+        
+        if (this.lastTime != this.time) {
+            this.lastOff = posArr;
+            this.lastTime = this.time;
+            this.lastRet = retPos;
+            
+            return [retPos,rotArr];
+        } else {
+            return [this.lastRet,rotArr];
+        }
     }
     
     function update(move) {

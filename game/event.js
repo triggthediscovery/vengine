@@ -66,7 +66,8 @@ new Event(   "aboveGround",AboveGroundEvent),
 new Event(     "onHitHigh",HitHighEvent),
 new Event(      "onHitMid",HitMidEvent),
 new Event(        "onAway",AwayEvent),
-new Event(      "onToward",TowardEvent)
+new Event(      "onToward",TowardEvent),
+new Event(     "onBlocked",BlockedEvent),
 ]);
 
 /*
@@ -94,6 +95,7 @@ onHitHigh
 onHitMid
 onAway
 onToward
+onBlocked
 */
 
 function Event(name, func) {
@@ -142,7 +144,22 @@ function LKeyUpEvent(obj) {
 }
 
 function SpaceKeyDownEvent(obj) {
-    if (obj.owner.Keys[32] && !obj.owner.Keysp[32]) return true; else return false;
+    //if (obj.owner.Keys[32] && !obj.owner.Keysp[32]) return true; else return false;
+    
+    if (obj.owner.Keys[32] && !obj.owner.Keysp[32]) {
+        if (obj.owner.Keys[65]) 
+            obj.owner.skele.scalex =-Math.abs(obj.owner.skele.scalex);
+        if (obj.owner.Keys[68]) 
+            obj.owner.skele.scalex = Math.abs(obj.owner.skele.scalex);
+            
+        obj.owner.Keys[32] = true;
+            
+        obj.owner.turn = false;    
+    
+        return true; 
+    } else {
+        return false;
+    }
 }
 
 function SpaceKeyUpEvent(obj) {
@@ -191,8 +208,10 @@ function AboveGroundEvent(obj) {
 }
 
 function HitHighEvent(obj) {
-    var hitx = obj.owner.enemy.pts[99].x1 + obj.owner.enemy.sx;
-    var hity = obj.owner.enemy.pts[99].y1 + obj.owner.enemy.sy; 
+    var hitx1 = obj.owner.enemy.pts[99].x1 + obj.owner.enemy.sx;
+    var hity1 = obj.owner.enemy.pts[99].y1 + obj.owner.enemy.sy; 
+    var hitx2 = obj.owner.enemy.pts[106].x1 + obj.owner.enemy.sx;
+    var hity2 = obj.owner.enemy.pts[106].y1 + obj.owner.enemy.sy; 
     var sx = obj.owner.sx;
     var sy = obj.owner.sy+60; 
     
@@ -204,21 +223,54 @@ function HitHighEvent(obj) {
     
     for (var i=0; i<aEn.currStates.length; i++) {
         if (aEn.currStates[i].id == 2) {
-            found = true
+            found = true;
         }
     }
+    
+    var aEnb = obj.owner.aniEn;
+    var foundb = false;
+    
+    for (var i=0; i<aEnb.currStates.length; i++) {
+        if (aEnb.currStates[i].id == 5) {
+            foundb = true;
+        }
+    }
+    
+    var sword_dist = ldist(hitx1,hity1,hitx2,hity2,sx,sy);
 
-    if (Math.abs(hitx-sx)<40 && Math.abs(hity-sy)<80 && found && obj.owner.iframes<0) {
-        obj.owner.hit=true;
-        return true; 
+    if (sword_dist.x>65 && sword_dist.x<80 && Math.abs(sword_dist.y<40) && found && obj.owner.iframes<0) {
+        if (foundb) {
+            obj.owner.enemy.blocked = true;
+            return false;
+        } else {
+            obj.owner.hit=true;
+            return true; 
+        }
     } else {
         return false;
     }
 }
 
+function DrawPt(x, y) {
+    context.fillStyle = "green";
+
+    context.beginPath();
+
+    context.moveTo(x+5,y);
+    context.lineTo(x,y+2);
+    context.lineTo(x-5,y);
+    context.lineTo(x,y-5);
+    context.lineTo(x+5,y);
+
+    context.closePath();
+    context.fill();
+}
+
 function HitMidEvent(obj) {
-    var hitx = obj.owner.enemy.pts[99].x1 + obj.owner.enemy.sx;
-    var hity = obj.owner.enemy.pts[99].y1 + obj.owner.enemy.sy; 
+    var hitx1 = obj.owner.enemy.pts[99].x1 + obj.owner.enemy.sx;
+    var hity1 = obj.owner.enemy.pts[99].y1 + obj.owner.enemy.sy; 
+    var hitx2 = obj.owner.enemy.pts[106].x1 + obj.owner.enemy.sx;
+    var hity2 = obj.owner.enemy.pts[106].y1 + obj.owner.enemy.sy; 
     var sx = obj.owner.sx;
     var sy = obj.owner.sy+60; 
 
@@ -227,11 +279,19 @@ function HitMidEvent(obj) {
     
     for (var i=0; i<aEn.currStates.length; i++) {
         if (aEn.currStates[i].id == 3) {
-            found = true
+            found = true;
         }
     }
+    
+    DrawPt(hitx1,hity1);
+    DrawPt(hitx2,hity2);
+    DrawPt(sx,sy);
+    
+    var sword_dist = ldist(hitx1,hity1,hitx2,hity2,sx,sy);
+    
+    //console.log(sword_dist.x + " " + sword_dist.y);
 
-    if (Math.abs(hitx-sx)<40 && Math.abs(hity-sy)<80 && found && obj.owner.iframes<0) {
+    if (sword_dist.x>0 && sword_dist.x<50 && Math.abs(sword_dist.y)<40 && found && obj.owner.iframes<0) {
         obj.owner.hit=true;
         return true; 
     } else {
@@ -245,4 +305,13 @@ function AwayEvent(obj) {
 
 function TowardEvent(obj) {
     if ((obj.owner.Keys[65] && (obj.owner.x < obj.owner.enemy.x)) || (obj.owner.Keys[68] && (obj.owner.x > obj.owner.enemy.x))) return true; else return false;
+}
+
+function BlockedEvent(obj) {
+    if (obj.owner.blocked) {
+        obj.owner.blocked = false;
+        return true;
+    } else {
+        return false;
+    }
 }

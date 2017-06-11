@@ -5,8 +5,8 @@ function compare(a, b) {
     return (b.depth) - (a.depth);
 }
 
-var player = new Player(0,-0.35,0.5,bones,points,ppolys,anima,undefined);
-var enemy  = new Player(0.5,-0.35,0.5,bones,points,epolys,anima,undefined);
+var player = new Player(0,-0.35,1,bones,points,ppolys,anima,undefined);
+var enemy  = new Player(0.5,-0.35,1,bones,points,epolys,anima,undefined);
 player.enemy = enemy;
 enemy.enemy = player;
 var background = new Model(0,0,0,Verts,Polys,1);
@@ -17,10 +17,9 @@ var cloud2 = new Model(-0.8,-3.3,1,cloudVerts,cloudPolys,0.7);
 var cloud3 = new Model(-1.6,-3.2,1,cloudVerts,cloudPolys,0.6);
 var cloud4 = new Model(0.4,-3.6,1,cloudVerts,cloudPolys,0.7);
 */
-var drawArr = background.pls.concat([player]);
+var drawArr = background.pls.concat(sun.pls);
 
-drawArr = drawArr.concat([enemy]);
-drawArr = drawArr.concat(sun.pls);
+var drawArrb = [player, enemy]
 /*
 drawArr = drawArr.concat(cloud1.pls);
 drawArr = drawArr.concat(cloud2.pls);
@@ -30,50 +29,64 @@ drawArr = drawArr.concat(cloud4.pls);
 context.lineWidth = 1;
 context.lineCap="none";
 
-var lights = [new Light(0.35, -0.75, -0.5, 1, 0.2, 0, 3), new Light(-0.35, -0.75, -0.5, 1, 0.2, 0, 3), new Light(0,-1, -16, 0.4, 0.4, 1, 0.5), new Light(0,-1, -16, 0, 0, 0.3, 0.5), new Light(0,-7, -16, 1, 1, 1, 0.05), new Light(0.35, -0.75, -3.4, 1, 0.2, 0, 3), new Light(-0.35, -0.75, -3.4, 1, 0.2, 0, 3)];
+var lights = [
+    new Light(0.35, -0.75, -0.5, 1, 0.2, 0, 2), 
+    new Light(-0.35, -0.75, -0.5, 1, 0.2, 0, 2), 
+    new Light(0,-1, -16, 0.4, 0.4, 1, 0.5), 
+    new Light(0,-1, -16, 0, 0, 0.3, 0.5), 
+    new Light(0,-7, -16, 1, 1, 1, 0.05), 
+    new Light(0.35, -0.75, -3.4, 1, 0.2, 0, 2), 
+    new Light(-0.35, -0.75, -3.4, 1, 0.2, 0, 2)
+];
 var scene = new Scene(lights);
 
 var aniNodes = [
-new AniNode(anima[0], 0, 0.06, anima[0][0].length, [ /*walk*/
+new AniNode(anima[0], 0, 0.05, anima[0][0].length, [ /*walk*/
     new ExitState("onShiftKeyDown", 4, 3, 0, 0),
+    new ExitState("onSpaceKeyDown", 6, 3, 0, 0),
     new ExitState(      "onAniEnd", 0,-1,-1, 0), 
     new ExitState(      "onToward",11, 3, 0, 0),
     new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
     new ExitState(      "onDKeyUp", 1, 2, 0, 0),
     new ExitState(    "onJKeyDown", 2, 3, 0, 0),
     new ExitState(    "onLKeyDown", 3, 3, 0, 0),
-    new ExitState(    "onKKeyDown", 5, 2, 0, 0),
-    new ExitState("onSpaceKeyDown", 6, 2, 0, 0)
+    new ExitState(    "onKKeyDown", 5, 2, 0, 0)
     ], 0, undefined, 0, 0, 1),
 
 new AniNode(anima[1], 0, 0.01, anima[1][0].length, [ /*stand*/
     new ExitState("onShiftKeyDown", 4, 3, 0, 0),
+    new ExitState("onSpaceKeyDown", 6, 3, 0, 0),
     new ExitState(      "onAniEnd", 1,-1,-1, 0), 
     new ExitState(        "onAway", 0, 2, 0,-1), 
     new ExitState(      "onToward",11, 2, 0,-1),
     new ExitState(    "onJKeyDown", 2, 3, 0, 0),
     new ExitState(    "onLKeyDown", 3, 3, 0, 0),
     new ExitState(    "onKKeyDown", 5, 2, 0, 0),
-    new ExitState("onSpaceKeyDown", 6, 2, 0, 0),
     new ExitState(     "onHitHigh", 9,-1, 1, 0),
     new ExitState(      "onHitMid",10,-1, 1, 0)
     ], 0, undefined, 1, 0, 1),
     
-new AniNode(anima[2], 0, 0.05, anima[2][0].length, [ /*swing*/
-    new ExitState("onAniEnd",1,-1, 0, 0)
+new AniNode(anima[2], 0, 0.03, anima[2][0].length, [ /*swing*/
+    new ExitState( "onAniEnd", 1,-1, 0, 0),
+    new ExitState("onHitHigh", 9,-1, 1, 0),
+    new ExitState( "onHitMid",10,-1, 1, 0),
+    new ExitState("onBlocked",12, 3, 0, 0.5)
     ], 0, undefined, 2, 0, 1),
     
 new AniNode(anima[3], 0,0.025, anima[3][0].length, [ /*jab*/
-    new ExitState("onAniEnd",1,-1, 0, 0)
+    new ExitState( "onAniEnd", 1,-1, 0, 0),
+    new ExitState("onHitHigh", 9,-1, 1, 0),
+    new ExitState( "onHitMid",10,-1, 1, 0)
     ], 0, undefined, 3, 0, 1),
     
-new AniNode(anima[4], 0,0.025, anima[4][0].length, [ /*roll*/
+new AniNode(anima[4], 0,0.024, anima[4][0].length, [ /*roll*/
     new ExitState("onAniEnd",1,-1, 0, 0)
     ], 0, undefined, 4, 0, 1),
     
 new AniNode(anima[5], 0, 0.03, anima[5][0].length, [ /*block*/
-    new ExitState("onAniEnd",5,-1,-1, 0),
-    new ExitState("onKKeyUp",1,-1, 0, 0)
+    new ExitState( "onAniEnd", 5,-1,-1, 0),
+    new ExitState("onHitHigh", 9,-1, 1, 0),
+    new ExitState( "onKKeyUp", 1, 2, 0, 0)
     ], 0, undefined, 5, 0, 0.2),  
     
 new AniNode(anima[6], 0, 0.08, anima[6][0].length, [ /*jump a*/
@@ -86,7 +99,7 @@ new AniNode(anima[7], 0, 0.05, anima[7][0].length, [ /*jump b*/
     ], 0, undefined, 7, 0, 1),  
     
 new AniNode(anima[8], 0, 0.05, anima[8][0].length, [ /*jump c*/
-    new ExitState("onAniEnd",1,-1, 0, 0),
+    new ExitState("onAniEnd",1, 2, 0, 0),
     ], 0, undefined, 8, 0, 1),  
     
 new AniNode(anima[9], 0, 0.05, anima[9][0].length, [ /*high hit*/
@@ -95,8 +108,9 @@ new AniNode(anima[9], 0, 0.05, anima[9][0].length, [ /*high hit*/
 new AniNode(anima[10], 0, 0.05, anima[10][0].length, [ /*mid hit*/
     ], 0, undefined,10, 0, 1),
     
-new AniNode(anima[0], 0,-0.06, anima[0][0].length, [ /*walkb*/
+new AniNode(anima[0], 0,-0.05, anima[0][0].length, [ /*walkb*/
     new ExitState("onShiftKeyDown", 4, 3, 0, 0),
+    new ExitState("onSpaceKeyDown", 6, 3, 0, 0),
     new ExitState(      "onAniEnd",11,-1,-1, 1), 
     new ExitState(        "onAway", 0, 3, 0, 0),
     new ExitState(      "onAKeyUp", 1, 2, 0, 0), 
@@ -104,8 +118,11 @@ new AniNode(anima[0], 0,-0.06, anima[0][0].length, [ /*walkb*/
     new ExitState(    "onJKeyDown", 2, 3, 0, 0),
     new ExitState(    "onLKeyDown", 3, 3, 0, 0),
     new ExitState(    "onKKeyDown", 5, 2, 0, 0),
-    new ExitState("onSpaceKeyDown", 6, 2, 0, 0)
     ], 0, undefined,11, 0, 1),
+    
+new AniNode(anima[11], 0, 0.015, anima[11][0].length, [ /*hit fail*/
+    new ExitState("onAniEnd",1, 2, 0, 0),
+    ], 0, undefined,12, 0, 1),
 ];
 
 var aniEn = new AniController(aniNodes, 1, [], player);
@@ -172,16 +189,30 @@ function draw() {
     player.Keys = Keys;
     player.Keysp = Keysp;
     
-    auto.update();
+    enemy.Keys[74] = true;
+    
+    //auto.update();
     
     var fr = this.aniEn.getAni();
     
     var cx = fr[0][0]*player.skele.scalex/2;
-
-    scrollx = (player.playerPt.x + enemy.playerPt.x) / -2;
-    scrolly = ((player.playerPt.y + enemy.playerPt.y) / -2) + (0.05);
     
-    scale = 0.8;
+    var nscrollx, nscrolly;
+
+    nscrollx = (player.playerPt.x + enemy.playerPt.x) / -2;
+    nscrolly = (player.playerPt.y + player.tar_y + enemy.playerPt.y + enemy.tar_y) / -2;
+    nscrolly += 0.3;
+    
+    var b1 = 10, b2 = 1;
+    
+    scrollx = ((scrollx*b1)+(nscrollx*b2))/(b1+b2);
+    scrolly = ((scrolly*b1)+(nscrolly*b2))/(b1+b2);
+    
+    var oscale;
+    
+    oscale = scale;
+    
+    scale = 1;
     
     player.playerPt.update();
     enemy.playerPt.update();
@@ -192,6 +223,10 @@ function draw() {
         player.playerPt.update();
         enemy.playerPt.update();
     }
+    
+    scale = ((oscale*b1)+(scale*b2))/(b1+b2);
+    
+    //console.log(scale);
     
     player.update();
     enemy.update();
@@ -205,7 +240,12 @@ function draw() {
         drawArr[i].draw();
     }
     
-    //eventList.getEvent("onHitHigh",enemy.aniEn);
+    for (var i=0; i<drawArrb.length; i++) {
+        drawArrb[i].draw();
+
+    }
+    
+    eventList.getEvent("onHitMid",player.aniEn);
 
     context.fillStyle = 'black';
 

@@ -13,12 +13,15 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.sy;
     this.playerPt = new Point3(this.x,this.y,this.z);
     this.aniEn = aniEn;
-    this.py = undefined;
+    this.py = 0;
     this.enemy = undefined;
     this.iframes = -1;
     this.hit = false;
     this.lastOff = [0,0,0];
     this.turn = false;
+    this.maxy = 0;
+    this.tar_y = 0;
+    this.blocked = false;
     
     this.Keys = [];
     this.Keysp = [];
@@ -54,10 +57,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     //pt99 is sword tip
 
     function update() {
-        if (this.py != undefined) {
-            this.y += 0.02*this.py;
-            this.py += 0.1;
-        }
+        
         
         this.iframes--;
         
@@ -93,21 +93,20 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
                 this.turn = true;
             } else if (this.aniEn.currStates[i].id == 1 && this.speed == 0) {
                 this.turn = true;
-            } else if ((this.aniEn.currStates[i].id == 7) && this.speed == 0 && this.aniEn.currStates[i].wMode == 0) {
-                this.speed = 1 * (this.skele.scalex/Math.abs(this.skele.scalex));
+            } else if (((this.aniEn.currStates[i].id == 6 && this.aniEn.currStates[i].time>0.8) || 
+                        (this.aniEn.currStates[i].id == 7)) && 
+                         this.speed == 0 && this.aniEn.currStates[i].wMode == 0) {
+                this.speed = 1.5 * (this.skele.scalex/Math.abs(this.skele.scalex));
                 
                 find = true;
                 
-                if (this.py == undefined) {
-                    this.py = -1.5;
+                if (this.y>-0.5) {
+                    this.py = -2.5;
                 }
             } else if (this.aniEn.currStates[i].id == 6 || this.aniEn.currStates[i].id == 7 || this.aniEn.currStates[i].id == 8) {
                 find = true;
             }
         }
-        
-        if (eventList.getEvent("onGround",this.aniEn)) 
-            this.py = undefined;
 
         this.x += 0.02*this.speed;
 
@@ -127,11 +126,11 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         var posArr = fr[0];
         var barr = fr[1];
         
-        var cx = ((posArr[0]-this.lastOff[0])/320)*this.skele.scalex/2;
-        var cy = ((posArr[1]-this.lastOff[1])/320)*this.skele.scaley/2;
+        //var cx = ((posArr[0]-this.lastOff[0])/320)*this.skele.scalex/2;
+        //var cy = ((posArr[1]-this.lastOff[1])/320)*this.skele.scaley/2;
         
-        this.x += cx*scale;
-        this.y += cy*scale;
+        this.x += (posArr[0]/380)*this.skele.scalex/2;
+        //this.y += (posArr[1]/380)*this.skele.scaley/2;
         
         this.lastOff = fr[0];
         
@@ -141,8 +140,8 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         this.skele.rotu = posArr[2];
         this.skele.roti = posArr[2];
         this.skele.scaley = mscale;
-        
-        if (Math.round(this.iframes/2)%5>3 && this.iframes>0) {
+
+        if (Math.round(this.iframes/4)%5>3 && this.iframes>0) {
             this.skele.x2+=1000;
         }
         
@@ -162,8 +161,17 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
 
         this.skele.update();
         
-        if (this.skele.maxy+this.sy>450) 
-            this.y = -0.35;
+        this.tar_y = (this.skele.maxy/300)/this.skele.scaley;
+        
+        if (this.y>-this.tar_y) {
+            this.y = 0.0001-this.tar_y;
+            this.py = 0;
+        }
+
+        if (this.py != undefined) {
+            this.y += 0.02*this.py;
+            this.py += 0.2;
+        }
         
         this.hit = false;
     }

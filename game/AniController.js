@@ -110,7 +110,7 @@ function AniController(states, start, exit, owner) {
             
             if (eventList.getEvent("onAniEnd", cState) || cState.weight==0) {
                 if (eventList.getEvent("onAniEnd", cState)) {
-                    
+                    /*
                     cState.time=cState.endTime;
                     var reta = cState.getAni();
                     
@@ -122,6 +122,7 @@ function AniController(states, start, exit, owner) {
 
                     var cy = (reta[0][1]/580)*cState.weight * (this.owner.skele.scaley/Math.abs(this.owner.skele.scaley));
                     this.owner.y += cy;
+                    */
                     
                 }
                 

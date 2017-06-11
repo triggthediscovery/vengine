@@ -27,7 +27,9 @@ function Skeleton(x, y, scalex, scaley, rot) {
         for (var i = 0; i < this.points.length; i++) {
             this.points[i].update();
             
-            if (this.points[i].y1>this.maxy) this.maxy = this.points[i].y1; 
+            if (this.points[i].y1>this.maxy) {
+                this.maxy = this.points[i].y1; 
+            }
         }
     }
     
