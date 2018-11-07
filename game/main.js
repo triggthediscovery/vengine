@@ -9,7 +9,7 @@ var player = new Player(0,-0.35,1,bones,points,ppolys,anima,undefined);
 var enemy  = new Player(0.5,-0.35,1,bones,points,epolys,anima,undefined);
 player.enemy = enemy;
 enemy.enemy = player;
-var background = new Model(0,0,0,Verts,Polys,1);
+var background = new Model(0,0.03,0,Verts,Polys,0.5);
 var sun = new Model(0,-0.5,1,sunVerts,sunPolys,0.2);
 /*
 var cloud1 = new Model(1,-3.1,1,cloudVerts,cloudPolys,0.5);
@@ -123,6 +123,15 @@ new AniNode(anima[0], 0,-0.05, anima[0][0].length, [ /*walkb*/
 new AniNode(anima[11], 0, 0.015, anima[11][0].length, [ /*hit fail*/
     new ExitState("onAniEnd",1, 2, 0, 0),
     ], 0, undefined,12, 0, 1),
+    
+new AniNode(anima[12], 0, 0.01, anima[12][0].length, [ /*die*/
+    new ExitState("onAniEnd",13, -1, -1, 0.7),
+    ], 0, undefined,13, 0, 0.8),
+    
+new AniNode(anima[12], 0, 0.001, anima[12][0].length, [ /*die_stay*/
+    new ExitState("onAniEnd",14, -1, -1, 0.7),
+    ], 0, undefined,14, 0.7, 0.8),
+    
 ];
 
 var aniEn = new AniController(aniNodes, 1, [], player);
@@ -189,9 +198,9 @@ function draw() {
     player.Keys = Keys;
     player.Keysp = Keysp;
     
-    enemy.Keys[74] = true;
+    //enemy.Keys[74] = true;
     
-    //auto.update();
+    auto.update();
     
     var fr = this.aniEn.getAni();
     
@@ -231,6 +240,11 @@ function draw() {
     player.update();
     enemy.update();
     
+    if (player.x < -1.2) player.x = -1.2;
+    if (player.x >  1.2) player.x =  1.2;
+    if (enemy.x < -1.2) enemy.x = -1.2;
+    if (enemy.x >  1.2) enemy.x =  1.2;
+    
     background.update();
     sun.update();
 
@@ -246,6 +260,15 @@ function draw() {
     }
     
     eventList.getEvent("onHitMid",player.aniEn);
+    eventList.getEvent("onHitMid",enemy.aniEn);
+    
+    context.fillStyle = 'grey';
+    context.fillRect(20,20,220,20); 
+    context.fillRect(canvas.width - 240,20,220,20); 
+    
+    context.fillStyle = 'red';
+    context.fillRect(30,25,player.health*2,10); 
+    context.fillRect(canvas.width - 230+(200-(enemy.health*2)),25,enemy.health*2,10); 
 
     context.fillStyle = 'black';
 

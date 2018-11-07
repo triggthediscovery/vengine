@@ -1,12 +1,13 @@
-function drawPt(x, y) {
-    context.fillStyle = "green";
+function DrawPt(x, y, col) {
+    context.fillStyle = col;
+
     context.beginPath();
 
-    context.moveTo(x+2,y);
+    context.moveTo(x+5,y);
     context.lineTo(x,y+2);
-    context.lineTo(x-2,y);
-    context.lineTo(x,y-2);
-    context.lineTo(x+2,y);
+    context.lineTo(x-5,y);
+    context.lineTo(x,y-5);
+    context.lineTo(x+5,y);
 
     context.closePath();
     context.fill();
@@ -214,15 +215,12 @@ function HitHighEvent(obj) {
     var hity2 = obj.owner.enemy.pts[106].y1 + obj.owner.enemy.sy; 
     var sx = obj.owner.sx;
     var sy = obj.owner.sy+60; 
-    
-    //drawPt(hitx, hity);
-    //drawPt(sx, sy);
-    
+
     var aEn = obj.owner.enemy.aniEn;
     var found = false;
     
     for (var i=0; i<aEn.currStates.length; i++) {
-        if (aEn.currStates[i].id == 2) {
+        if (aEn.currStates[i].id == 2 && aEn.currStates[i].time > 0.2 && aEn.currStates[i].time < 0.6) {
             found = true;
         }
     }
@@ -236,34 +234,24 @@ function HitHighEvent(obj) {
         }
     }
     
+    //DrawPt(hitx1,hity1, "green");
+    //DrawPt(hitx2,hity2, "green");
+    //DrawPt(sx,sy, "red");
+    
     var sword_dist = ldist(hitx1,hity1,hitx2,hity2,sx,sy);
 
-    if (sword_dist.x>65 && sword_dist.x<80 && Math.abs(sword_dist.y<40) && found && obj.owner.iframes<0) {
+    if (sword_dist.x>0 && sword_dist.x<200 && Math.abs(sword_dist.y)<40 && found && obj.owner.iframes<0) {
+
         if (foundb) {
             obj.owner.enemy.blocked = true;
             return false;
         } else {
-            obj.owner.hit=true;
+            obj.owner.hit(10);
             return true; 
         }
     } else {
         return false;
     }
-}
-
-function DrawPt(x, y) {
-    context.fillStyle = "green";
-
-    context.beginPath();
-
-    context.moveTo(x+5,y);
-    context.lineTo(x,y+2);
-    context.lineTo(x-5,y);
-    context.lineTo(x,y-5);
-    context.lineTo(x+5,y);
-
-    context.closePath();
-    context.fill();
 }
 
 function HitMidEvent(obj) {
@@ -283,16 +271,17 @@ function HitMidEvent(obj) {
         }
     }
     
-    DrawPt(hitx1,hity1);
-    DrawPt(hitx2,hity2);
-    DrawPt(sx,sy);
+    //DrawPt(hitx1,hity1, "green");
+    //DrawPt(hitx2,hity2, "green");
+    //DrawPt(sx,sy, "red");
     
     var sword_dist = ldist(hitx1,hity1,hitx2,hity2,sx,sy);
     
-    //console.log(sword_dist.x + " " + sword_dist.y);
+    
 
     if (sword_dist.x>0 && sword_dist.x<50 && Math.abs(sword_dist.y)<40 && found && obj.owner.iframes<0) {
-        obj.owner.hit=true;
+        obj.owner.hit(5);
+
         return true; 
     } else {
         return false;

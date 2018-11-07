@@ -16,12 +16,12 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.py = 0;
     this.enemy = undefined;
     this.iframes = -1;
-    this.hit = false;
     this.lastOff = [0,0,0];
     this.turn = false;
     this.maxy = 0;
     this.tar_y = 0;
     this.blocked = false;
+    this.health = 100;
     
     this.Keys = [];
     this.Keysp = [];
@@ -54,6 +54,20 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
         }
     }
     
+    function hit(damage) {
+        if (this.iframes < 0) { 
+            this.iframes = 30;
+            
+            this.health-=damage;
+            
+            if (this.health<0) {
+                this.aniEn.forceState(13);
+            
+                this.health=0;
+            }
+        }
+    }
+    
     //pt99 is sword tip
 
     function update() {
@@ -74,12 +88,6 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
                 this.skele.scalex = -Math.abs(this.skele.scalex); 
             else 
                 this.skele.scalex = Math.abs(this.skele.scalex);
-        }
-        
-        
-        
-        if (this.hit) {
-            this.iframes = 30;
         }
 
         this.speed = 0;
@@ -172,8 +180,6 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
             this.y += 0.02*this.py;
             this.py += 0.2;
         }
-        
-        this.hit = false;
     }
     
     function draw() {
@@ -183,6 +189,7 @@ function Player(x, y, z, PBones, PPoints, PPolys, animations, aniEn) {
     this.update = update;
     this.draw = draw;
     this.init = init;
+    this.hit = hit;
     
     this.init();
 }

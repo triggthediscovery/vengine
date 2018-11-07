@@ -87,7 +87,11 @@ function AniController(states, start, exit, owner) {
         return retArr;
     }
     
-    
+    function forceState(state_num) {
+        this.currStates = [copy(states[state_num])];
+        this.currStates[0].owner = owner;
+        this.currStates[0].init();
+    }
     
     function update() {
         var len = this.currStates.length;
@@ -136,4 +140,5 @@ function AniController(states, start, exit, owner) {
     
     this.getAni = getAni;
     this.update = update;
+    this.forceState = forceState;
 }
